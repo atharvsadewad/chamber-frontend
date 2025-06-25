@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "title": "Indian Penal Code, 1860",
+    "description": "Defines criminal offenses and penalties in India.",
+    "pdfUrl": "pdfs/ipc.pdf",
+    "category": "criminal law"
+  },
+  {
+    "id": 2,
+    "title": "Right to Information Act, 2005",
+    "description": "Empowers citizens to request information from public authorities.",
+    "pdfUrl": "pdfs/rti.pdf",
+    "category": "administrative law"
+  }
+]
