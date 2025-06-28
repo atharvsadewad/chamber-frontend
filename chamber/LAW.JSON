@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "title": "Indian Penal Code, 1860",
+        "description": "The main criminal code of India which covers all substantive aspects of criminal law.",
+        "category": "criminal",
+        "type": "acts",
+        "content": "CHAPTER I: INTRODUCTION. 1. Title and extent of operation of the Code. 2. Punishment of offences committed within India. ... (full text of IPC or excerpt here)"
+    },
+    {
+        "id": 2,
+        "title": "Code of Criminal Procedure, 1973",
+        "description": "The main legislation on the procedure for administration of the substantive criminal law in India.",
+        "category": "criminal",
+        "type": "acts",
+        "content": "PRELIMINARY. 1. Short title, extent and commencement. 2. Definitions. ... (full text of CrPC or excerpt here)"
+    },
+    {
+        "id": 3,
+        "title": "Constitution of India",
+        "description": "The supreme law of India which lays down the framework demarcating fundamental political principles.",
+        "category": "constitutional",
+        "type": "acts",
+        "content": "PREAMBLE. WE, THE PEOPLE OF INDIA, having solemnly resolved ... (full text of the Constitution or excerpt here)"
+    },
+    {
+        "id": 4,
+        "title": "Information Technology Act, 2000",
+        "description": "An Act to provide legal recognition for transactions carried out by means of electronic data interchange.",
+        "category": "cyber",
+        "type": "acts",
+        "content": "CHAPTER I: PRELIMINARY. 1. Short title, extent, commencement and application. 2. Definitions. ... (full text or excerpt here)"
+    },
+    {
+        "id": 5,
+        "title": "Companies Act, 2013",
+        "description": "An Act to consolidate and amend the law relating to companies and certain other associations.",
+        "category": "corporate",
+        "type": "acts",
+        "content": "CHAPTER I: PRELIMINARY. 1. Short title, extent, commencement and application. 2. Definitions. ... (full text or excerpt here)"
+    }
+]

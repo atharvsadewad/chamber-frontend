@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chamber - Legal Research Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Constitution Background Element -->
+    <div class="constitution-bg">⚖</div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <div>
+                    <h1 class="site-title">Chamber</h1>
+                    <p class="site-tagline">Comprehensive Legal Research Platform for India</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="search-container">
+            <h2 class="search-title">Search Legal Documents</h2>
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search by law name, number, or description..." id="searchInput">
+            </div>
+            <div class="search-filters">
+                <span class="filter-tag active" data-filter="all">All Documents</span>
+                <span class="filter-tag" data-filter="acts">Acts</span>
+                <span class="filter-tag" data-filter="criminal">Criminal Law</span>
+                <span class="filter-tag" data-filter="civil">Civil Law</span>
+                <span class="filter-tag" data-filter="cyber">Cyber Law</span>
+                <span class="filter-tag" data-filter="constitutional">Constitutional</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Subject Matter Classification -->
+        <section class="classification-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div>
+                    <h2 class="section-title">Subject Matter Classification</h2>
+                </div>
+            </div>
+            <div class="classification-grid">
+                <div class="classification-card" data-category="criminal">
+                    <div class="card-count">245</div>
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-gavel"></i>
+                        </div>
+                        <h3 class="card-title">Criminal Law</h3>
+                    </div>
+                    <p class="card-description">Indian Penal Code, Criminal Procedure Code, Evidence Act, and related criminal statutes and judgments.</p>
+                </div>
+                <div class="classification-card" data-category="civil">
+                    <div class="card-count">189</div>
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h3 class="card-title">Civil Law</h3>
+                    </div>
+                    <p class="card-description">Contract Act, Transfer of Property, Civil Procedure Code, and civil litigation related documents.</p>
+                </div>
+                <div class="classification-card" data-category="constitutional">
+                    <div class="card-count">156</div>
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-landmark"></i>
+                        </div>
+                        <h3 class="card-title">Constitutional Law</h3>
+                    </div>
+                    <p class="card-description">Constitution of India, fundamental rights, directive principles, and constitutional amendments.</p>
+                </div>
+                <div class="classification-card" data-category="corporate">
+                    <div class="card-count">203</div>
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3 class="card-title">Corporate Law</h3>
+                    </div>
+                    <p class="card-description">Companies Act, Securities laws, SEBI regulations, and corporate governance documents.</p>
+                </div>
+                <div class="classification-card" data-category="cyber">
+                    <div class="card-count">67</div>
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="card-title">Cyber Law</h3>
+                    </div>
+                    <p class="card-description">Information Technology Act, cyber crime provisions, data protection, and digital regulations.</p>
+                </div>
+                <div class="classification-card" data-category="family">
+                    <div class="card-count">134</div>
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="card-title">Family Law</h3>
+                    </div>
+                    <p class="card-description">Marriage laws, divorce, maintenance, adoption, and family court procedures across religions.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Instrument Classification -->
+        <section class="classification-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div>
+                    <h2 class="section-title">Instrument Classification</h2>
+                </div>
+            </div>
+            <div class="classification-grid">
+                <div class="classification-card" data-type="acts">
+                    <div class="card-count">312</div>
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-scroll"></i>
+                        </div>
+                        <h3 class="card-title">Acts & Statutes</h3>
+                    </div>
+                    <p class="card-description">Parliamentary acts, state legislation, and statutory instruments from central and state governments.</p>
+                </div>
+                <div class="classification-card" data-type="rules">
+                    <div class="card-count">187</div>
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-list-ul"></i>
+                        </div>
+                        <h3 class="card-title">Rules & Regulations</h3>
+                    </div>
+                    <p class="card-description">Government rules, regulatory frameworks, and administrative guidelines.</p>
+                </div>
+                <div class="classification-card" data-type="judgments">
+                    <div class="card-count">456</div>
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <h3 class="card-title">Court Judgments</h3>
+                    </div>
+                    <p class="card-description">Supreme Court and High Court judgments, landmark cases, and legal precedents.</p>
+                </div>
+                <div class="classification-card" data-type="treaties">
+                    <div class="card-count">89</div>
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3 class="card-title">Treaties & Conventions</h3>
+                    </div>
+                    <p class="card-description">International treaties, conventions, and agreements ratified by India.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal for Results -->
+    <div id="resultsModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <span class="modal-close" id="modalClose">&times;</span>
+        <div id="modalResults"></div>
+      </div>
+    </div>
+
+    <!-- Chatbot -->
+    <div class="chatbot-container">
+        <button class="chatbot-toggle" id="chatbotToggle">
+            <i class="fas fa-comments"></i>
+        </button>
+        <div class="chatbot-window" id="chatbotWindow">
+            <div class="chatbot-header">
+                <div class="chatbot-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div>
+                    <div class="chatbot-title">Chamber AI</div>
+                    <div style="font-size: 0.8rem; opacity: 0.8;">Legal Assistant</div>
+                </div>
+            </div>
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="message bot">
+                    <div class="message-content">
+                        Hello! I'm Chamber AI, your legal research assistant. Ask me about Indian laws, legal concepts, or any legal question you have.
+                    </div>
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" placeholder="Ask a legal question..." id="chatbotInput">
+                <button id="chatbotSend">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
