@@ -134,7 +134,7 @@ function initializeChatbot() {
         const typingIndicator = addMessage('Thinking...', 'bot');
         try {
             // Replace with your actual API endpoint
-            const response = await fetch('https://chamber-backend.vercel.app/api/chat', 
+            const response = await fetch( 'https://chamber-backend1-ytbm.vercel.app/' , 
 {  
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', },
