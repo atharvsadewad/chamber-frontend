@@ -215,3 +215,11 @@ function addDemoQuestions() {
     `;
     chatbotMessages.appendChild(demoDiv);
 }
+window.addEventListener('scroll', () => {
+  const banner = document.getElementById('chamberAIBanner');
+  if (window.scrollY > 50) {
+    banner.style.opacity = '0';
+  } else {
+    banner.style.opacity = '1';
+  }
+});
