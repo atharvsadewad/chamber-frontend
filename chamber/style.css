@@ -42,6 +42,25 @@ body {
 .header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="scales" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M10,2 L18,10 L10,18 L2,10 Z" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23scales)"/></svg>') repeat; opacity: 0.3; }
 
 /* Search Section */
+/* Chamber AI Identity - Next to Search Bar */
+.chamber-ai-identity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 15px;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #1e2d38;
+  cursor: pointer;
+}
+
+.chamber-ai-identity img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(18%) sepia(10%) saturate(210%) hue-rotate(176deg);
+}
+
 .search-section { background: var(--warm-white); padding: 3rem 0; box-shadow: var(--shadow-light); }
 .search-container { max-width: 800px; margin: 0 auto; padding: 0 2rem; }
 .search-title { font-family: 'Crimson Text', serif; font-size: 2rem; color: var(--deep-blue); text-align: center; margin-bottom: 2rem; }
