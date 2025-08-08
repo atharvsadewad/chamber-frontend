@@ -1,50 +1,28 @@
-let lawsData = [];
+let laws = [];
 
-document.addEventListener('DOMContentLoaded', async function() {
-    await fetchLawsData();
-    initializeSearch();
+// Load laws.json when the page loads
+fetch('laws.json')
+  .then(response => response.json())
+  .then(data => {
+    laws = data;
     initializeClassifications();
-    initializeChatbot();
-    setupModal();
-    setupScrollAnimations();
-    setTimeout(addDemoQuestions, 1000);
-});
+  })
+  .catch(error => console.error('Error loading laws.json:', error));
 
-async function fetchLawsData() {
-    try {
-        const response = await fetch('laws.json');  
-        lawsData = await response.json();
-    } catch (e) {
-        // fallback in case of error
-        lawsData = [];
-        alert("Failed to load legal data.");
-    }
-}
-
-// Search functionality
-function initializeSearch() {
-    const searchInput = document.getElementById('searchInput');
-    const filterTags = document.querySelectorAll('.filter-tag');
-    searchInput.addEventListener('input', performSearch);
-    filterTags.forEach(tag => {
-        tag.addEventListener('click', function() {
-            filterTags.forEach(t => t.classList.remove('active'));
-            this.classList.add('active');
-            performSearch();
-        });
-    });
-}
-
+// Perform search with category/type filtering
 function performSearch() {
     const query = document.getElementById('searchInput').value.toLowerCase();
-    const activeFilter = document.querySelector('.filter-tag.active').dataset.filter;
-    let filteredResults = lawsData;
-    // Apply category filter
+    const activeFilter = document.querySelector('.filter-tag.active')?.dataset.filter || 'all';
+
+    let filteredResults = laws;
+
+    // Apply category/type filter
     if (activeFilter !== 'all') {
         filteredResults = filteredResults.filter(law =>
             law.category === activeFilter || law.type === activeFilter
         );
     }
+
     // Apply search query
     if (query) {
         filteredResults = filteredResults.filter(law =>
@@ -53,6 +31,7 @@ function performSearch() {
             (law.content && law.content.toLowerCase().includes(query))
         );
     }
+
     displayResults(filteredResults);
 }
 
@@ -63,7 +42,7 @@ function initializeClassifications() {
         card.addEventListener('click', function() {
             const category = this.dataset.category || this.dataset.type;
             if (category) {
-                const filteredResults = lawsData.filter(law =>
+                const filteredResults = laws.filter(law =>
                     law.category === category || law.type === category
                 );
                 displayResults(filteredResults);
@@ -106,13 +85,14 @@ function displayResults(results) {
     }
 }
 
-// Chatbot functionality (unchanged except to remove resultsSection scroll)
+// Chatbot functionality
 function initializeChatbot() {
     const chatbotToggle = document.getElementById('chatbotToggle');
     const chatbotWindow = document.getElementById('chatbotWindow');
     const chatbotInput = document.getElementById('chatbotInput');
     const chatbotSend = document.getElementById('chatbotSend');
     const chatbotMessages = document.getElementById('chatbotMessages');
+
     chatbotToggle.addEventListener('click', function() {
         const isVisible = chatbotWindow.style.display === 'flex';
         chatbotWindow.style.display = isVisible ? 'none' : 'flex';
@@ -120,12 +100,14 @@ function initializeChatbot() {
             chatbotInput.focus();
         }
     });
+
     chatbotSend.addEventListener('click', sendMessage);
     chatbotInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             sendMessage();
         }
     });
+
     async function sendMessage() {
         const message = chatbotInput.value.trim();
         if (!message) return;
@@ -133,11 +115,9 @@ function initializeChatbot() {
         chatbotInput.value = '';
         const typingIndicator = addMessage('Thinking...', 'bot');
         try {
-            // Replace with your actual API endpoint
-        const response = await fetch('https://chamber-backend1.vercel.app/api/chat', {
-  
+            const response = await fetch('https://chamber-backend1.vercel.app/api/chat', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: message, context: 'legal_research' })
             });
             if (!response.ok) throw new Error('Failed to get response');
@@ -150,6 +130,7 @@ function initializeChatbot() {
             addMessage('I apologize, but I\'m having trouble connecting right now. Please try again later.', 'bot');
         }
     }
+
     function addMessage(content, sender) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${sender}`;
@@ -160,7 +141,7 @@ function initializeChatbot() {
     }
 }
 
-// Smooth scrolling for internal links (if any)
+// Smooth scrolling for internal links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -182,6 +163,7 @@ function setupScrollAnimations() {
             }
         });
     }, observerOptions);
+
     document.querySelectorAll('.classification-card').forEach(card => {
         card.style.opacity = '0';
         card.style.transform = 'translateY(20px)';
@@ -190,7 +172,7 @@ function setupScrollAnimations() {
     });
 }
 
-// Add some demo legal questions for better UX
+// Demo legal questions for chatbot
 const demoQuestions = [
     "What is Article 21 of the Indian Constitution?",
     "Explain the difference between IPC and CrPC",
@@ -216,3 +198,10 @@ function addDemoQuestions() {
     chatbotMessages.appendChild(demoDiv);
 }
 
+// Initialize everything after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    setupModal();
+    setupScrollAnimations();
+    initializeChatbot();
+    addDemoQuestions();
+});
