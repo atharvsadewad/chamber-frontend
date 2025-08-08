@@ -1,6 +1,10 @@
 /* Import professional fonts */
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
 
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
     --primary-gold: #D4AF37;
     --dark-gold: #B8941F;
@@ -115,3 +119,4 @@ body {
     .search-filters { justify-content: flex-start; }
     .modal-content { max-width: 95vw; }
 }
+
