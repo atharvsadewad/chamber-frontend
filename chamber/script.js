@@ -5,24 +5,53 @@ fetch('laws.json')
   .then(response => response.json())
   .then(data => {
     laws = data;
-    initializeClassifications();
   })
   .catch(error => console.error('Error loading laws.json:', error));
 
-// Perform search with category/type filtering
+// Search function
+function searchLaw() {
+  const query = document.getElementById('searchInput').value.toLowerCase();
+  const resultsDiv = document.getElementById('results');
+  resultsDiv.innerHTML = '';
+
+  const filtered = laws.filter(law =>
+    law.title.toLowerCase().includes(query) ||
+    law.description.toLowerCase().includes(query) ||
+    (law.content && law.content.toLowerCase().includes(query))
+  );
+
+  if (filtered.length === 0) {
+    resultsDiv.innerHTML = '<p>No results found</p>';
+    return;
+  }
+
+  filtered.forEach(law => {
+    const lawDiv = document.createElement('div');
+    lawDiv.classList.add('law-item');
+    lawDiv.innerHTML = `
+      <h3>${law.title}</h3>
+      <p><strong>Category:</strong> ${law.category}</p>
+      <p>${law.description}</p>
+      <details>
+        <summary>Read more</summary>
+        <p>${law.content}</p>
+      </details>
+    `;
+    resultsDiv.appendChild(lawDiv);
+  });
+}
+
 function performSearch() {
     const query = document.getElementById('searchInput').value.toLowerCase();
-    const activeFilter = document.querySelector('.filter-tag.active')?.dataset.filter || 'all';
-
+    const activeFilter = document.querySelector('.filter-tag.active').dataset.filter;
     let filteredResults = laws;
 
-    // Apply category/type filter
+    // Apply category filter
     if (activeFilter !== 'all') {
         filteredResults = filteredResults.filter(law =>
             law.category === activeFilter || law.type === activeFilter
         );
     }
-
     // Apply search query
     if (query) {
         filteredResults = filteredResults.filter(law =>
@@ -31,7 +60,6 @@ function performSearch() {
             (law.content && law.content.toLowerCase().includes(query))
         );
     }
-
     displayResults(filteredResults);
 }
 
@@ -152,7 +180,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Add subtle animations on scroll
+// Add animations on scroll
 function setupScrollAnimations() {
     const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
     const observer = new IntersectionObserver(function(entries) {
@@ -163,7 +191,6 @@ function setupScrollAnimations() {
             }
         });
     }, observerOptions);
-
     document.querySelectorAll('.classification-card').forEach(card => {
         card.style.opacity = '0';
         card.style.transform = 'translateY(20px)';
@@ -172,7 +199,7 @@ function setupScrollAnimations() {
     });
 }
 
-// Demo legal questions for chatbot
+// Demo questions
 const demoQuestions = [
     "What is Article 21 of the Indian Constitution?",
     "Explain the difference between IPC and CrPC",
@@ -197,11 +224,3 @@ function addDemoQuestions() {
     `;
     chatbotMessages.appendChild(demoDiv);
 }
-
-// Initialize everything after DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    setupModal();
-    setupScrollAnimations();
-    initializeChatbot();
-    addDemoQuestions();
-});
