@@ -61,31 +61,63 @@ function performSearch() {
   displayResults(filteredResults);
 }
 
-// Classification cards → show list of laws in that category
+// Classification cards → show list of laws or subcategories
 function initializeClassifications() {
   const classificationCards = document.querySelectorAll('.classification-card');
   classificationCards.forEach(card => {
     card.addEventListener('click', function() {
       const category = this.dataset.category || this.dataset.type;
       if (category) {
-        const filteredResults = laws.filter(law =>
-          law.category === category || law.type === category
-        );
-        displayLawList(filteredResults, category);
+        // Find all unique subcategories for the clicked category
+        const subcategories = [...new Set(laws.filter(law => law.category === category).map(law => law.subcategory))];
+        
+        if (subcategories.length > 0) {
+            displaySubcategoryList(subcategories, category);
+        } else {
+            // Fallback for categories without subcategories
+            const filteredResults = laws.filter(law => law.category === category || law.type === category);
+            displayLawList(filteredResults, category);
+        }
       }
     });
   });
 }
 
-// Show list of laws for a category
-function displayLawList(lawList, category) {
+// Show list of subcategories for a main category
+function displaySubcategoryList(subcategories, category) {
+    const modal = document.getElementById('resultsModal');
+    const modalResults = document.getElementById('modalResults');
+    modal.style.display = 'flex';
+    modalResults.innerHTML = `
+        <h2>${category} Laws</h2>
+        <p>Select a subcategory to view laws:</p>
+        <ul style="list-style:none; padding:0;">
+            ${subcategories.map(subcat => `
+                <li style="padding:12px; cursor:pointer; border-bottom:1px solid #ddd; background:#f9f9f9; margin-bottom:8px; border-radius:5px;"
+                    onclick="displayLawsForSubcategory('${subcat.replace(/'/g, "\\'")}', '${category}')">
+                    ${subcat}
+                </li>
+            `).join('')}
+        </ul>
+    `;
+}
+
+// Show list of laws for a specific subcategory
+function displayLawsForSubcategory(subcategory, category) {
+    const filteredResults = laws.filter(law => law.category === category && law.subcategory === subcategory);
+    displayLawList(filteredResults, subcategory);
+}
+
+
+// Show list of laws for a category or subcategory
+function displayLawList(lawList, headerTitle) {
   const modal = document.getElementById('resultsModal');
   const modalResults = document.getElementById('modalResults');
 
   if (lawList.length > 0) {
     modal.style.display = 'flex';
     modalResults.innerHTML = `
-      <h2>${category} Laws</h2>
+      <h2>${headerTitle} Laws</h2>
       <ul style="list-style:none; padding:0;">
         ${lawList.map(law => `
           <li style="padding:8px; cursor:pointer; border-bottom:1px solid #ddd;"
@@ -94,10 +126,11 @@ function displayLawList(lawList, category) {
           </li>
         `).join('')}
       </ul>
+      <button onclick="initializeClassifications()">Back to Categories</button>
     `;
   } else {
     modal.style.display = 'flex';
-    modalResults.innerHTML = `<p>No laws found for ${category}</p>`;
+    modalResults.innerHTML = `<p>No laws found for ${headerTitle}</p>`;
   }
 }
 
@@ -111,10 +144,10 @@ function displaySingleLaw(title) {
   modal.style.display = 'flex';
   modalResults.innerHTML = `
     <h2>${law.title}</h2>
-    <p><strong>Category:</strong> ${law.category}</p>
+    <p><strong>Category:</strong> ${law.category} > ${law.subcategory}</p>
     <p>${law.description}</p>
     <div>${law.content || ''}</div>
-    <button onclick="initializeClassifications()">Back to Categories</button>
+    <button onclick="displayLawsForSubcategory('${law.subcategory}', '${law.category}')">Back to Laws</button>
   `;
 }
 
