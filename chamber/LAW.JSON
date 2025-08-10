@@ -1,42 +1,44 @@
 [
-    {
-        "id": 1,
-        "title": "Indian Penal Code, 1860",
-        "description": "The main criminal code of India which covers all substantive aspects of criminal law.",
-        "category": "criminal",
-        "type": "acts",
-        "content": "CHAPTER I: INTRODUCTION. 1. Title and extent of operation of the Code. 2. Punishment of offences committed within India. ... (full text of IPC or excerpt here)"
-    },
-    {
-        "id": 2,
-        "title": "Code of Criminal Procedure, 1973",
-        "description": "The main legislation on the procedure for administration of the substantive criminal law in India.",
-        "category": "criminal",
-        "type": "acts",
-        "content": "PRELIMINARY. 1. Short title, extent and commencement. 2. Definitions. ... (full text of CrPC or excerpt here)"
-    },
-    {
-        "id": 3,
-        "title": "Constitution of India",
-        "description": "The supreme law of India which lays down the framework demarcating fundamental political principles.",
-        "category": "constitutional",
-        "type": "acts",
-        "content": "PREAMBLE. WE, THE PEOPLE OF INDIA, having solemnly resolved ... (full text of the Constitution or excerpt here)"
-    },
-    {
-        "id": 4,
-        "title": "Information Technology Act, 2000",
-        "description": "An Act to provide legal recognition for transactions carried out by means of electronic data interchange.",
-        "category": "cyber",
-        "type": "acts",
-        "content": "CHAPTER I: PRELIMINARY. 1. Short title, extent, commencement and application. 2. Definitions. ... (full text or excerpt here)"
-    },
-    {
-        "id": 5,
-        "title": "Companies Act, 2013",
-        "description": "An Act to consolidate and amend the law relating to companies and certain other associations.",
-        "category": "corporate",
-        "type": "acts",
-        "content": "CHAPTER I: PRELIMINARY. 1. Short title, extent, commencement and application. 2. Definitions. ... (full text or excerpt here)"
-    }
+  {
+    "title": "Section 302 – Punishment for Murder",
+    "description": "Defines the punishment for committing murder under the IPC.",
+    "content": "Whoever commits murder shall be punished with death or imprisonment for life, and shall also be liable to fine.",
+    "category": "criminal",
+    "type": "ipc"
+  },
+  {
+    "title": "Section 375 – Rape",
+    "description": "Defines the offence of rape under IPC.",
+    "content": "A man is said to commit 'rape' if he has sexual intercourse with a woman under certain circumstances without her consent.",
+    "category": "criminal",
+    "type": "ipc"
+  },
+  {
+    "title": "Section 379 – Theft",
+    "description": "Punishment for committing theft under IPC.",
+    "content": "Whoever commits theft shall be punished with imprisonment of either description for a term which may extend to three years, or with fine, or with both.",
+    "category": "criminal",
+    "type": "ipc"
+  },
+  {
+    "title": "Section 10 – Law of Contract",
+    "description": "Defines the essential elements of a valid contract under the Indian Contract Act.",
+    "content": "All agreements are contracts if they are made by the free consent of parties competent to contract, for a lawful consideration and with a lawful object.",
+    "category": "civil",
+    "type": "contract"
+  },
+  {
+    "title": "Section 73 – Compensation for Breach of Contract",
+    "description": "Details the right to claim damages when a contract is broken.",
+    "content": "When a contract has been broken, the party who suffers is entitled to receive compensation for any loss or damage caused to him thereby.",
+    "category": "civil",
+    "type": "contract"
+  },
+  {
+    "title": "Section 5 – Transfer of Property Act",
+    "description": "Defines what constitutes the transfer of property in India.",
+    "content": "In the following sections 'transfer of property' means an act by which a living person conveys property, in present or in future, to one or more other living persons.",
+    "category": "civil",
+    "type": "property"
+  }
 ]
