@@ -270,5 +270,36 @@
         </div>
     </div>
     <script src="script.js"></script>
+    <!-- Chatbot Toggle -->
+<div id="chatbotToggle">💬</div>
+
+<!-- Chatbot Window -->
+<div id="chatbotWindow" style="display:none;">
+    <div id="chatbotHeader">
+        <span>Legal Chatbot</span>
+        <button id="chatbotClose">×</button>
+    </div>
+    <div id="chatbotMessages"></div>
+    <input id="chatbotInput" type="text" placeholder="Ask me something..." />
+    <button id="chatbotSend">Send</button>
+</div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatbotToggle = document.getElementById('chatbotToggle');
+        const chatbotWindow = document.getElementById('chatbotWindow');
+        const chatbotClose = document.getElementById('chatbotClose');
+
+        chatbotToggle.addEventListener('click', function() {
+            chatbotWindow.style.display = chatbotWindow.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        chatbotClose.addEventListener('click', function() {
+            chatbotWindow.style.display = 'none';
+        });
+    });
+</script>
+
 </body>
 </html>
+
