@@ -1,6 +1,6 @@
 let laws = [];
 
-// Load laws.json when the page loads
+// Load laws.json
 fetch('laws.json')
   .then(response => response.json())
   .then(data => {
@@ -8,7 +8,7 @@ fetch('laws.json')
   })
   .catch(error => console.error('Error loading laws.json:', error));
 
-// Search function
+// Search functionality
 function searchLaw() {
   const query = document.getElementById('searchInput').value.toLowerCase();
   const resultsDiv = document.getElementById('results');
@@ -41,225 +41,190 @@ function searchLaw() {
   });
 }
 
-function performSearch() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    const activeFilter = document.querySelector('.filter-tag.active').dataset.filter;
-    let filteredResults = laws;
-
-    if (activeFilter !== 'all') {
-        filteredResults = filteredResults.filter(law =>
-            law.category === activeFilter || law.type === activeFilter
-        );
-    }
-    if (query) {
-        filteredResults = filteredResults.filter(law =>
-            law.title.toLowerCase().includes(query) ||
-            law.description.toLowerCase().includes(query) ||
-            (law.content && law.content.toLowerCase().includes(query))
-        );
-    }
-    displayResults(filteredResults);
-}
-
-// Classification cards → show list of laws in that category
-function initializeClassifications() {
-    const classificationCards = document.querySelectorAll('.classification-card');
-    classificationCards.forEach(card => {
-        card.addEventListener('click', function() {
-            const category = this.dataset.category || this.dataset.type;
-            if (category) {
-                const filteredResults = laws.filter(law =>
-                    law.category === category || law.type === category
-                );
-                displayLawList(filteredResults, category);
-            }
-        });
-    });
-}
-
-// Show list of laws for a category
-function displayLawList(lawList, category) {
-    const modal = document.getElementById('resultsModal');
-    const modalResults = document.getElementById('modalResults');
-
-    if (lawList.length > 0) {
-        modal.style.display = 'flex';
-        modalResults.innerHTML = `
-            <h2>${category} Laws</h2>
-            <ul style="list-style:none; padding:0;">
-                ${lawList.map(law => `
-                    <li style="padding:8px; cursor:pointer; border-bottom:1px solid #ddd;"
-                        onclick="displaySingleLaw('${law.title.replace(/'/g, "\\'")}')">
-                        ${law.title}
-                    </li>
-                `).join('')}
-            </ul>
-        `;
-    } else {
-        modal.style.display = 'flex';
-        modalResults.innerHTML = `<p>No laws found for ${category}</p>`;
-    }
-}
-
-// Show single law detail
-function displaySingleLaw(title) {
-    const law = laws.find(l => l.title === title);
-    if (!law) return;
-
-    const modal = document.getElementById('resultsModal');
-    const modalResults = document.getElementById('modalResults');
-    modal.style.display = 'flex';
-    modalResults.innerHTML = `
-        <h2>${law.title}</h2>
-        <p><strong>Category:</strong> ${law.category}</p>
-        <p>${law.description}</p>
-        <div>${law.content || ''}</div>
-        <button onclick="initializeClassifications()">Back to Categories</button>
-    `;
-}
-
-// Modal logic
-function setupModal() {
-    const modal = document.getElementById('resultsModal');
-    document.getElementById('modalClose').onclick = function() {
-        modal.style.display = 'none';
-    };
-    window.onclick = function(event) {
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    };
-}
-
+// Display results in modal
 function displayResults(results) {
-    const modal = document.getElementById('resultsModal');
-    const modalResults = document.getElementById('modalResults');
-    if (results.length > 0) {
-        modal.style.display = 'flex';
-        modalResults.innerHTML = results.map(law => `
-            <div class="result-item">
-                <div class="result-title">${law.title}</div>
-                <div class="result-description">${law.description}</div>
-                ${law.content ? `<div class="result-content">${law.content.substring(0, 500)}${law.content.length > 500 ? '...' : ''}</div>` : ''}
-                <div class="result-tags">
-                    <span class="result-tag">${law.category}</span>
-                    <span class="result-tag">${law.type}</span>
-                </div>
-            </div>
-        `).join('');
-    } else {
-        modal.style.display = 'none';
+  const modal = document.getElementById('resultsModal');
+  const modalResults = document.getElementById('modalResults');
+
+  if (results.length > 0) {
+    modal.style.display = 'flex';
+    modalResults.innerHTML = results.map(law => `
+      <div class="result-item">
+        <div class="result-title" data-id="${law.id}">${law.title}</div>
+        <div class="result-description">${law.description}</div>
+        <div class="result-tags">
+          <span class="result-tag">${law.category}</span>
+          <span class="result-tag">${law.type}</span>
+        </div>
+      </div>
+    `).join('');
+  } else {
+    modal.style.display = 'none';
+  }
+
+  // Add click event to open full content
+  document.querySelectorAll('.result-title').forEach(title => {
+    title.addEventListener('click', () => {
+      const id = parseInt(title.dataset.id);
+      const law = laws.find(l => l.id === id);
+      if (law) {
+        modalResults.innerHTML = `
+          <h2>${law.title}</h2>
+          <p><strong>Category:</strong> ${law.category}</p>
+          <p>${law.description}</p>
+          <pre>${law.content}</pre>
+        `;
+      }
+    });
+  });
+}
+
+// Setup classification card clicks
+function initializeClassifications() {
+  const classificationCards = document.querySelectorAll('.classification-card');
+  classificationCards.forEach(card => {
+    card.addEventListener('click', function () {
+      const category = this.dataset.category || this.dataset.type;
+      if (category) {
+        const filteredResults = laws.filter(law =>
+          law.category === category || law.type === category
+        );
+        displayResults(filteredResults);
+      }
+    });
+  });
+}
+
+// Modal close logic
+function setupModal() {
+  const modal = document.getElementById('resultsModal');
+  const closeBtn = document.getElementById('modalClose');
+
+  closeBtn.onclick = function () {
+    modal.style.display = 'none';
+  };
+
+  window.onclick = function (event) {
+    if (event.target === modal) {
+      modal.style.display = 'none';
     }
+  };
 }
 
 // Chatbot functionality
 function initializeChatbot() {
-    const chatbotToggle = document.getElementById('chatbotToggle');
-    const chatbotWindow = document.getElementById('chatbotWindow');
-    const chatbotInput = document.getElementById('chatbotInput');
-    const chatbotSend = document.getElementById('chatbotSend');
-    const chatbotMessages = document.getElementById('chatbotMessages');
+  const chatbotToggle = document.getElementById('chatbotToggle');
+  const chatbotWindow = document.getElementById('chatbotWindow');
+  const chatbotInput = document.getElementById('chatbotInput');
+  const chatbotSend = document.getElementById('chatbotSend');
+  const chatbotMessages = document.getElementById('chatbotMessages');
 
-    chatbotToggle.addEventListener('click', function() {
-        const isVisible = chatbotWindow.style.display === 'flex';
-        chatbotWindow.style.display = isVisible ? 'none' : 'flex';
-        if (!isVisible) {
-            chatbotInput.focus();
-        }
-    });
-
-    chatbotSend.addEventListener('click', sendMessage);
-    chatbotInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-    });
-
-    async function sendMessage() {
-        const message = chatbotInput.value.trim();
-        if (!message) return;
-        addMessage(message, 'user');
-        chatbotInput.value = '';
-        const typingIndicator = addMessage('Thinking...', 'bot');
-        try {
-            const response = await fetch('https://chamber-backend1.vercel.app/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: message, context: 'legal_research' })
-            });
-            if (!response.ok) throw new Error('Failed to get response');
-            const data = await response.json();
-            typingIndicator.remove();
-            addMessage(data.response || 'I apologize, but I encountered an error. Please try again.', 'bot');
-        } catch (error) {
-            console.error('Chatbot error:', error);
-            typingIndicator.remove();
-            addMessage('I apologize, but I\'m having trouble connecting right now. Please try again later.', 'bot');
-        }
+  chatbotToggle.addEventListener('click', function () {
+    const isVisible = chatbotWindow.style.display === 'flex';
+    chatbotWindow.style.display = isVisible ? 'none' : 'flex';
+    if (!isVisible) {
+      chatbotInput.focus();
     }
+  });
 
-    function addMessage(content, sender) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${sender}`;
-        messageDiv.innerHTML = `<div class="message-content">${content}</div>`;
-        chatbotMessages.appendChild(messageDiv);
-        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-        return messageDiv;
+  chatbotSend.addEventListener('click', sendMessage);
+  chatbotInput.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+      sendMessage();
     }
+  });
+
+  async function sendMessage() {
+    const message = chatbotInput.value.trim();
+    if (!message) return;
+    addMessage(message, 'user');
+    chatbotInput.value = '';
+    const typingIndicator = addMessage('Thinking...', 'bot');
+    try {
+      const response = await fetch('https://chamber-backend1.vercel.app/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: message, context: 'legal_research' })
+      });
+      if (!response.ok) throw new Error('Failed to get response');
+      const data = await response.json();
+      typingIndicator.remove();
+      addMessage(data.response || 'I encountered an error. Please try again.', 'bot');
+    } catch (error) {
+      typingIndicator.remove();
+      addMessage('I am having trouble connecting. Please try again later.', 'bot');
+    }
+  }
+
+  function addMessage(content, sender) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}`;
+    messageDiv.innerHTML = `<div class="message-content">${content}</div>`;
+    chatbotMessages.appendChild(messageDiv);
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    return messageDiv;
+  }
 }
 
 // Smooth scrolling for internal links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    });
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
 });
 
-// Animations on scroll
+// Scroll animations
 function setupScrollAnimations() {
-    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
-    document.querySelectorAll('.classification-card').forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(card);
+  const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+  const observer = new IntersectionObserver(function (entries) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
     });
+  }, observerOptions);
+  document.querySelectorAll('.classification-card').forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(card);
+  });
 }
 
-// Demo questions
+// Demo questions in chatbot
 const demoQuestions = [
-    "What is Article 21 of the Indian Constitution?",
-    "Explain the difference between IPC and CrPC",
-    "What are the essential elements of a valid contract?",
-    "What is the procedure for filing an FIR?",
-    "Explain the concept of anticipatory bail"
+  "What is Article 21 of the Indian Constitution?",
+  "Explain the difference between IPC and CrPC",
+  "What are the essential elements of a valid contract?"
 ];
 
 function addDemoQuestions() {
-    const chatbotMessages = document.getElementById('chatbotMessages');
-    const demoDiv = document.createElement('div');
-    demoDiv.className = 'message bot';
-    demoDiv.innerHTML = `
-        <div class="message-content">
-            <div style="margin-bottom: 0.5rem;">Here are some questions you can ask:</div>
-            ${demoQuestions.map(q => `
-                <div style="margin: 0.3rem 0; padding: 0.3rem 0.6rem; background: #f1f5f9; border-radius: 10px; font-size: 0.8rem; cursor: pointer;" onclick="document.getElementById('chatbotInput').value = '${q}'">
-                    ${q}
-                </div>
-            `).join('')}
+  const chatbotMessages = document.getElementById('chatbotMessages');
+  const demoDiv = document.createElement('div');
+  demoDiv.className = 'message bot';
+  demoDiv.innerHTML = `
+    <div class="message-content">
+      <div style="margin-bottom: 0.5rem;">Here are some questions you can ask:</div>
+      ${demoQuestions.map(q => `
+        <div style="margin: 0.3rem 0; padding: 0.3rem 0.6rem; background: #f1f5f9; border-radius: 10px; font-size: 0.8rem; cursor: pointer;" onclick="document.getElementById('chatbotInput').value = '${q}'">
+          ${q}
         </div>
-    `;
-    chatbotMessages.appendChild(demoDiv);
+      `).join('')}
+    </div>
+  `;
+  chatbotMessages.appendChild(demoDiv);
 }
+
+// Initialize all features
+document.addEventListener('DOMContentLoaded', function () {
+  initializeClassifications();
+  setupModal();
+  setupScrollAnimations();
+  initializeChatbot();
+  addDemoQuestions();
+});
