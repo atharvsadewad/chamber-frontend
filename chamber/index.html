@@ -50,25 +50,27 @@
             </div>
         </div>
     </header>
-
+    
     <!-- Search Section -->
-    <section class="search-section">
-        <div class="search-container">
-            <h2 class="search-title">Search Legal Documents</h2>
-            <div class="search-box">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" class="search-input" placeholder="Search by law name, number, or description..." id="searchInput">
-            </div>
-            <div class="search-filters">
-                <span class="filter-tag active" data-filter="all">All Documents</span>
-                <span class="filter-tag" data-filter="acts">Acts</span>
-                <span class="filter-tag" data-filter="criminal">Criminal Law</span>
-                <span class="filter-tag" data-filter="civil">Civil Law</span>
-                <span class="filter-tag" data-filter="cyber">Cyber Law</span>
-                <span class="filter-tag" data-filter="constitutional">Constitutional</span>
-            </div>
+<section class="search-section">
+    <div class="search-container">
+        <h2 class="search-title">Search Legal Documents</h2>
+        <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="Search by law name, number, or description..." id="searchInput">
+            <button onclick="performSearch()" style="margin-left: 10px; padding: 6px 12px; cursor: pointer;">Search</button>
         </div>
-    </section>
+        <div class="search-filters">
+            <span class="filter-tag active" data-filter="all">All Documents</span>
+            <span class="filter-tag" data-filter="acts">Acts</span>
+            <span class="filter-tag" data-filter="criminal">Criminal Law</span>
+            <span class="filter-tag" data-filter="civil">Civil Law</span>
+            <span class="filter-tag" data-filter="cyber">Cyber Law</span>
+            <span class="filter-tag" data-filter="constitutional">Constitutional</span>
+        </div>
+    </div>
+</section>
+
 
     <!-- Main Content -->
     <main class="main-content">
@@ -363,5 +365,6 @@
 
 </body>
 </html>
+
 
 
