@@ -46,13 +46,11 @@ function performSearch() {
     const activeFilter = document.querySelector('.filter-tag.active').dataset.filter;
     let filteredResults = laws;
 
-    // Apply category filter
     if (activeFilter !== 'all') {
         filteredResults = filteredResults.filter(law =>
             law.category === activeFilter || law.type === activeFilter
         );
     }
-    // Apply search query
     if (query) {
         filteredResults = filteredResults.filter(law =>
             law.title.toLowerCase().includes(query) ||
@@ -63,7 +61,7 @@ function performSearch() {
     displayResults(filteredResults);
 }
 
-// Classification cards functionality
+// Classification cards → show list of laws in that category
 function initializeClassifications() {
     const classificationCards = document.querySelectorAll('.classification-card');
     classificationCards.forEach(card => {
@@ -73,13 +71,54 @@ function initializeClassifications() {
                 const filteredResults = laws.filter(law =>
                     law.category === category || law.type === category
                 );
-                displayResults(filteredResults);
+                displayLawList(filteredResults, category);
             }
         });
     });
 }
 
-// Modal logic for showing results
+// Show list of laws for a category
+function displayLawList(lawList, category) {
+    const modal = document.getElementById('resultsModal');
+    const modalResults = document.getElementById('modalResults');
+
+    if (lawList.length > 0) {
+        modal.style.display = 'flex';
+        modalResults.innerHTML = `
+            <h2>${category} Laws</h2>
+            <ul style="list-style:none; padding:0;">
+                ${lawList.map(law => `
+                    <li style="padding:8px; cursor:pointer; border-bottom:1px solid #ddd;"
+                        onclick="displaySingleLaw('${law.title.replace(/'/g, "\\'")}')">
+                        ${law.title}
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+    } else {
+        modal.style.display = 'flex';
+        modalResults.innerHTML = `<p>No laws found for ${category}</p>`;
+    }
+}
+
+// Show single law detail
+function displaySingleLaw(title) {
+    const law = laws.find(l => l.title === title);
+    if (!law) return;
+
+    const modal = document.getElementById('resultsModal');
+    const modalResults = document.getElementById('modalResults');
+    modal.style.display = 'flex';
+    modalResults.innerHTML = `
+        <h2>${law.title}</h2>
+        <p><strong>Category:</strong> ${law.category}</p>
+        <p>${law.description}</p>
+        <div>${law.content || ''}</div>
+        <button onclick="initializeClassifications()">Back to Categories</button>
+    `;
+}
+
+// Modal logic
 function setupModal() {
     const modal = document.getElementById('resultsModal');
     document.getElementById('modalClose').onclick = function() {
@@ -180,7 +219,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Add animations on scroll
+// Animations on scroll
 function setupScrollAnimations() {
     const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
     const observer = new IntersectionObserver(function(entries) {
