@@ -4,6 +4,7 @@
     "description": "Defines the punishment for committing murder under the IPC.",
     "content": "Whoever commits murder shall be punished with death or imprisonment for life, and shall also be liable to fine.",
     "category": "criminal",
+    "subcategory": "Indian Penal Code",
     "type": "ipc"
   },
   {
@@ -11,6 +12,7 @@
     "description": "Defines the offence of rape under IPC.",
     "content": "A man is said to commit 'rape' if he has sexual intercourse with a woman under certain circumstances without her consent.",
     "category": "criminal",
+    "subcategory": "Indian Penal Code",
     "type": "ipc"
   },
   {
@@ -18,6 +20,7 @@
     "description": "Punishment for committing theft under IPC.",
     "content": "Whoever commits theft shall be punished with imprisonment of either description for a term which may extend to three years, or with fine, or with both.",
     "category": "criminal",
+    "subcategory": "Indian Penal Code",
     "type": "ipc"
   },
   {
@@ -25,6 +28,7 @@
     "description": "Defines the essential elements of a valid contract under the Indian Contract Act.",
     "content": "All agreements are contracts if they are made by the free consent of parties competent to contract, for a lawful consideration and with a lawful object.",
     "category": "civil",
+    "subcategory": "Indian Contract Act",
     "type": "contract"
   },
   {
@@ -32,6 +36,7 @@
     "description": "Details the right to claim damages when a contract is broken.",
     "content": "When a contract has been broken, the party who suffers is entitled to receive compensation for any loss or damage caused to him thereby.",
     "category": "civil",
+    "subcategory": "Indian Contract Act",
     "type": "contract"
   },
   {
@@ -39,6 +44,7 @@
     "description": "Defines what constitutes the transfer of property in India.",
     "content": "In the following sections 'transfer of property' means an act by which a living person conveys property, in present or in future, to one or more other living persons.",
     "category": "civil",
+    "subcategory": "Transfer of Property Act",
     "type": "property"
   }
 ]
