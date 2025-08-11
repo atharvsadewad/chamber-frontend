@@ -2,7 +2,32 @@
   {
     "title": "Section 302 – Punishment for Murder",
     "description": "Defines the punishment for committing murder under the IPC.",
-    "content": "Whoever commits murder shall be punished with death or imprisonment for life, and shall also be liable to fine.",
+    "content": "Section 376 of the IPC deals with the punishment for rape. This section and its sub-sections prescribe different levels of punishment depending on the specific circumstances of the crime, such as:
+
+Section 376(1): General punishment for rape.
+
+Section 376(2): Enhanced punishment for specific categories of offenders, such as police officers, public servants, or persons in a position of trust or authority.
+
+Section 376(A): Punishment for causing death or leaving the victim in a persistent vegetative state.
+
+Section 376(AB): Punishment for rape on a woman under twelve years of age.
+
+Section 376(B): Deals with sexual intercourse by a husband with his wife during separation.
+
+Section 376(C), (D), (DA), and (DB): These sections address different forms of gang rape and offenses against minors, with varying degrees of punishment.
+
+Murder
+The primary acts related to murder in the IPC are:
+
+Section 299: Defines culpable homicide. This is a broader term, and not all culpable homicides are considered murder.
+
+Section 300: Defines murder. This section specifies the conditions under which culpable homicide becomes murder. It outlines different intentions and knowledge that elevate an act from culpable homicide to murder. This section also includes certain exceptions, such as when the act is committed under grave and sudden provocation.
+
+Section 302: Prescribes the punishment for murder. The punishment can be death or imprisonment for life, and the offender is also liable to a fine.
+
+Section 304: Deals with the punishment for culpable homicide not amounting to murder. This applies when the act does not meet the specific criteria to be classified as murder under Section 300.
+
+Section 304A: Addresses causing death by negligence, which is a separate offense from murder and culpable homicide.",
     "category": "criminal",
     "subcategory": "Indian Penal Code",
     "type": "ipc"
@@ -10,7 +35,15 @@
   {
     "title": "Section 375 – Rape",
     "description": "Defines the offence of rape under IPC.",
-    "content": "A man is said to commit 'rape' if he has sexual intercourse with a woman under certain circumstances without her consent.",
+    "content": "The primary section of the IPC dealing with the definition of rape is Section 375. This section defines what constitutes "rape" under the law, including the circumstances under which a man is said to commit the offense. The law specifies various descriptions, such as:
+
+Penetration without consent.
+
+Consent obtained through fear of death or hurt.
+
+With consent when the victim is unable to understand the nature and consequences of the act due to unsoundness of mind or intoxication.
+
+With or without consent, when the victim is under a certain age (the legal age has been amended over time, currently at 18 years).",
     "category": "criminal",
     "subcategory": "Indian Penal Code",
     "type": "ipc"
@@ -48,3 +81,4 @@
     "type": "property"
   }
 ]
+
