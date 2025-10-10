@@ -215,7 +215,7 @@ function initializeChatbot() {
     chatbotInput.value = '';
     const typingIndicator = addMessage('Thinking...', 'bot');
     try {
-      const response = await fetch('https://chamber-backend1.vercel.app/api/chat', {
+      const response = await fetch('https://chamber-backend1.vercel.app/api/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: message, context: 'legal_research' })
@@ -304,3 +304,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
