@@ -215,7 +215,8 @@ function initializeChatbot() {
     chatbotInput.value = '';
     const typingIndicator = addMessage('Thinking...', 'bot');
     try {
-      const response = await fetch('https://chamber-backend1.vercel.app/api/chat', {
+         const response = await fetch('https://chamber-backend1.vercel.app/api/chat', {
+
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: message, context: 'legal_research' })
@@ -223,7 +224,7 @@ function initializeChatbot() {
       if (!response.ok) throw new Error('Failed to get response');
       const data = await response.json();
       typingIndicator.remove();
-      addMessage(data.response || 'I apologize, but I encountered an error. Please try again.', 'bot');
+      addMessage(data.reply || 'I apologize, but I encountered an error. Please try again.', 'bot');
     } catch (error) {
       console.error('Chatbot error:', error);
       typingIndicator.remove();
@@ -304,3 +305,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
