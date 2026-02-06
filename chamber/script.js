@@ -216,10 +216,15 @@ function initializeChatbot() {
     const typingIndicator = addMessage('Thinking...', 'bot');
     try {
     const response = await fetch("https://chamber-backend1.vercel.app/api/chat", {
-     method: "POST",
-     headers: { "Content-Type": "application/json" },
-     body: JSON.stringify({ message: message, context: "legal_research" })
+      method: "POST",
+      mode: "cors",
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({ message: message })
     });
+
    
       if (!response.ok) throw new Error('Failed to get response');
       const data = await response.json();
@@ -305,6 +310,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
 
 
 
