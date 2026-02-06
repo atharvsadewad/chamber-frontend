@@ -224,7 +224,7 @@ function initializeChatbot() {
       if (!response.ok) throw new Error('Failed to get response');
       const data = await response.json();
       typingIndicator.remove();
-      addMessage(data.reply || 'I apologize, but I encountered an error. Please try again.', 'bot');
+      addMessage(data.response || 'I apologize, but I encountered an error. Please try again.', 'bot');
     } catch (error) {
       console.error('Chatbot error:', error);
       typingIndicator.remove();
@@ -305,5 +305,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
 
 
