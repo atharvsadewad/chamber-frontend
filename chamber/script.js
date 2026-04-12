@@ -3,127 +3,128 @@ const SUPABASE_KEY = "sb_publishable_BpzTnxe-unBnSsdfdKUZ0Q__9L1ZZaJ";
 
 let laws = [];
 
-// 🔥 LOAD LAWS FROM DB
+// 🔥 LOAD LAWS (FOR CLASSIFICATION ONLY)
 async function loadLaws() {
-  try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/laws`, {
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${SUPABASE_KEY}`
-      }
-    });
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/laws?select=*`, {
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`
+    }
+  });
 
-    laws = await res.json();
-    console.log("✅ Laws loaded:", laws);
-
-  } catch (error) {
-    console.error("❌ Error loading laws:", error);
-  }
+  laws = await res.json();
 }
 
-// 🔍 SEARCH FUNCTION (DB BASED)
+// 🔍 SEARCH (FULL FIXED)
 async function performSearch() {
-  const query = document.getElementById('searchInput').value.toLowerCase();
-  const activeFilter = document.querySelector('.filter-tag.active')?.dataset.filter || 'all';
+  const query = document.getElementById('searchInput').value;
 
-  try {
-    let url = `${SUPABASE_URL}/rest/v1/laws?select=*`;
+  let url = `${SUPABASE_URL}/rest/v1/laws?select=*`;
 
-    if (query) {
-      url += `&or=(title.ilike.%${query}%,description.ilike.%${query}%,content.ilike.%${query}%)`;
-    }
-
-    if (activeFilter !== 'all') {
-      url += `&subject=eq.${activeFilter}`;
-    }
-
-    url += `&limit=20`;
-
-    const res = await fetch(url, {
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${SUPABASE_KEY}`
-      }
-    });
-
-    const data = await res.json();
-    displayResults(data);
-
-  } catch (err) {
-    console.error("❌ Search error:", err);
+  if (query) {
+    url += `&or=(title.ilike.%${query}%,description.ilike.%${query}%,content.ilike.%${query}%,section.ilike.%${query}%)`;
   }
+
+  url += `&order=section.asc`;
+
+  const res = await fetch(url, {
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`
+    }
+  });
+
+  const data = await res.json();
+  displayResults(data);
 }
 
-// 📊 DISPLAY SEARCH RESULTS
+// 📊 DISPLAY RESULTS (CLICKABLE)
 function displayResults(results) {
   const modal = document.getElementById('resultsModal');
   const modalResults = document.getElementById('modalResults');
 
   modal.style.display = 'flex';
 
-  modalResults.innerHTML = results.map(law => `
-    <div class="result-item">
-      <h3>${law.title}</h3>
-      <p>${law.description}</p>
-      <p>${law.content.substring(0, 200)}...</p>
-      <p><strong>Source:</strong> ${law.source}</p>
+  modalResults.innerHTML = results.map((law, index) => `
+    <div class="result-item" onclick="displaySingleLaw(${index})">
+      <h3 class="result-title">${law.title}</h3>
+      <p class="result-description">${law.description}</p>
     </div>
   `).join('');
+
+  // store results temporarily
+  window.currentResults = results;
 }
 
-// 🎯 CLASSIFICATION CLICK
+// 📘 SINGLE LAW VIEW (FIXED + FORMATTED)
+function displaySingleLaw(index) {
+  const law = window.currentResults[index];
+
+  const modalResults = document.getElementById('modalResults');
+
+  modalResults.innerHTML = `
+    <button onclick="performSearch()" style="margin-bottom:10px;">⬅ Back</button>
+
+    <h2>${law.title}</h2>
+    <p>${law.description}</p>
+
+    <div style="margin-top:15px;">
+      ${formatContent(law.content)}
+    </div>
+
+    <p style="margin-top:15px;"><strong>Source:</strong> ${law.source}</p>
+  `;
+}
+
+// 🧠 FORMAT LEGAL CONTENT
+function formatContent(content) {
+  if (!content) return "";
+
+  return content
+    .split(/(?=\(\d+\))/) // split (1)(2)(3)
+    .map(point => {
+      const num = point.match(/^\(\d+\)/);
+      if (!num) return `<p>${point}</p>`;
+
+      return `
+        <div style="margin-bottom:8px;">
+          <strong>${num[0]}</strong> ${point.replace(num[0], "").trim()}
+        </div>
+      `;
+    })
+    .join('');
+}
+
+// 🎯 CLASSIFICATION (FIXED)
 function initializeClassifications() {
   const cards = document.querySelectorAll('.classification-card');
 
   cards.forEach(card => {
-    card.addEventListener('click', function () {
-      const category = this.dataset.category || this.dataset.type;
+    card.addEventListener('click', async function () {
+      const category = this.dataset.category;
+
+      let url = `${SUPABASE_URL}/rest/v1/laws?select=*`;
 
       if (category) {
-        const filtered = laws.filter(
-          law => law.subject === category || law.instrument_type === category
-        );
-        displayLawList(filtered, category);
+        url += `&subject=eq.${category}`;
       }
+
+      url += `&order=section.asc`;
+
+      const res = await fetch(url, {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`
+        }
+      });
+
+      const data = await res.json();
+      displayResults(data);
     });
   });
 }
 
-// 📜 LAW LIST
-function displayLawList(lawList, title) {
-  const modal = document.getElementById('resultsModal');
-  const modalResults = document.getElementById('modalResults');
-
-  modal.style.display = 'flex';
-
-  modalResults.innerHTML = `
-    <h2>${title}</h2>
-    ${lawList.map(law => `
-      <div>
-        <h3 onclick="displaySingleLaw('${law.title}')">${law.title}</h3>
-      </div>
-    `).join('')}
-  `;
-}
-
-// 📘 SINGLE LAW VIEW
-function displaySingleLaw(title) {
-  const law = laws.find(l => l.title === title);
-
-  const modal = document.getElementById('resultsModal');
-  const modalResults = document.getElementById('modalResults');
-
-  modal.style.display = 'flex';
-
-  modalResults.innerHTML = `
-    <h2>${law.title}</h2>
-    <p>${law.description}</p>
-    <p>${law.content}</p>
-    <p><strong>Source:</strong> ${law.source}</p>
-  `;
-}
-
-// ❌ CLOSE RESULT MODAL
+// ❌ MODAL CLOSE
 function setupModal() {
   const modal = document.getElementById('resultsModal');
 
@@ -131,14 +132,14 @@ function setupModal() {
     modal.style.display = 'none';
   };
 
-  window.addEventListener('click', function (e) {
+  window.onclick = function (e) {
     if (e.target === modal) {
       modal.style.display = 'none';
     }
-  });
+  };
 }
 
-// 🤖 CHATBOT
+// 🤖 CHATBOT (UNCHANGED)
 function initializeChatbot() {
   const toggle = document.getElementById('chatbotToggle');
   const windowBox = document.getElementById('chatbotWindow');
@@ -188,7 +189,7 @@ function initializeChatbot() {
   }
 }
 
-// 🧾 DRAFT GENERATOR
+// 🧾 DRAFT
 async function generateDraft() {
   const type = document.getElementById("draftType").value;
   const input = document.getElementById("draftInput").value;
@@ -206,26 +207,8 @@ async function generateDraft() {
   });
 
   const data = await res.json();
-
   document.getElementById("draftResult").innerText = data.response;
 }
-
-// 📂 DRAFT MODAL CONTROL
-function openDraft() {
-  document.getElementById("draftModal").style.display = "flex";
-}
-
-function closeDraft() {
-  document.getElementById("draftModal").style.display = "none";
-}
-
-// close draft modal on outside click
-document.addEventListener("click", function(e) {
-  const modal = document.getElementById("draftModal");
-  if (e.target === modal) {
-    modal.style.display = "none";
-  }
-});
 
 // 🚀 INIT
 document.addEventListener('DOMContentLoaded', function () {
@@ -234,4 +217,3 @@ document.addEventListener('DOMContentLoaded', function () {
   setupModal();
   initializeChatbot();
 });
-
