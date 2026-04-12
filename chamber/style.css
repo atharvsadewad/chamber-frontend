@@ -173,3 +173,21 @@ body {
   to { opacity: 1; transform: scale(1); }
 }
 
+/* RESULT HOVER FIX */
+.result-item {
+    padding: 12px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.result-item:hover {
+    background: #f5f5f5;
+    transform: translateY(-2px);
+}
+
+/* MODAL IMPROVEMENT */
+.modal-content {
+    max-height: 80vh;
+    overflow-y: auto;
+}
