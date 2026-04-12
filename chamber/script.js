@@ -17,12 +17,22 @@ async function loadLaws() {
 
 // 🔍 SEARCH (FULL FIXED)
 async function performSearch() {
-  const query = document.getElementById('searchInput').value;
+  const input = document.getElementById('searchInput').value.trim().toLowerCase();
 
   let url = `${SUPABASE_URL}/rest/v1/laws?select=*`;
 
-  if (query) {
-    url += `&or=(title.ilike.%${query}%,description.ilike.%${query}%,content.ilike.%${query}%,section.ilike.%${query}%)`;
+  // 🔥 detect "section X"
+  const sectionMatch = input.match(/section\s*(\d+)/);
+
+  if (sectionMatch) {
+    const num = sectionMatch[1];
+
+    url += `&section=like.${num}%`;  
+    // 🔥 THIS gives:
+    // 1 → 1, 10, 11, 100 etc
+
+  } else if (input) {
+    url += `&or=(title.ilike.%${input}%,description.ilike.%${input}%,content.ilike.%${input}%)`;
   }
 
   url += `&order=section.asc`;
@@ -101,17 +111,8 @@ function initializeClassifications() {
 
   cards.forEach(card => {
     card.addEventListener('click', async function () {
-      const category = this.dataset.category;
 
-      let url = `${SUPABASE_URL}/rest/v1/laws?select=*`;
-
-      if (category) {
-        url += `&subject=eq.${category}`;
-      }
-
-      url += `&order=section.asc`;
-
-      const res = await fetch(url, {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/laws?select=*&order=section.asc`, {
         headers: {
           apikey: SUPABASE_KEY,
           Authorization: `Bearer ${SUPABASE_KEY}`
