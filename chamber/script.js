@@ -31,7 +31,7 @@ async function performSearch() {
   const activeFilter = document.querySelector('.filter-tag.active');
   const filterValue = activeFilter ? activeFilter.dataset.filter : 'all';
   if (filterValue && filterValue !== 'all') {
-    url += `&category=eq.${filterValue}`;
+    url += `&subject=eq.${filterValue}`;
   }
 
   // Apply search terms
