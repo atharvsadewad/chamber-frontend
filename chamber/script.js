@@ -40,6 +40,9 @@ async function performSearch() {
       url += `&subject=eq.${activeFilter}`;
     }
 
+  // ⚡ LIMIT (ADD HERE)
+    url += `&limit=20`;
+
     const res = await fetch(url, {
       headers: {
         apikey: SUPABASE_KEY,
