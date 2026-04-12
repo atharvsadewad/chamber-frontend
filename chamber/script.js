@@ -3,7 +3,7 @@ const SUPABASE_KEY = "sb_publishable_BpzTnxe-unBnSsdfdKUZ0Q__9L1ZZaJ";
 
 let laws = [];
 
-// 🔥 LOAD LAWS (FOR CLASSIFICATION ONLY)
+// 🔥 LOAD LAWS
 async function loadLaws() {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/laws?select=*`, {
     headers: {
@@ -15,27 +15,24 @@ async function loadLaws() {
   laws = await res.json();
 }
 
-// 🔍 SEARCH (FULL FIXED)
+// 🔍 UNIVERSAL SEARCH (FIXED)
 async function performSearch() {
   const input = document.getElementById('searchInput').value.trim().toLowerCase();
 
   let url = `${SUPABASE_URL}/rest/v1/laws?select=*`;
 
-  // 🔥 detect "section X"
-  const sectionMatch = input.match(/section\s*(\d+)/);
+  if (!input) {
+    // show all
+  } 
+  else if (!isNaN(input)) {
+    // number search (1, 10, 302)
+    url += `&section=like.${input}%`;
+  } 
+  else {
+    const encoded = encodeURIComponent(input);
 
-  if (sectionMatch) {
-    const num = sectionMatch[1];
-
-    url += `&section=like.${num}%`;  
-    // 🔥 THIS gives:
-    // 1 → 1, 10, 11, 100 etc
-
-  } else if (input) {
-    url += `&or=(title.ilike.%${input}%,description.ilike.%${input}%,content.ilike.%${input}%)`;
+    url += `&or=(title.ilike.%${encoded}%,description.ilike.%${encoded}%,content.ilike.%${encoded}%,section.ilike.%${encoded}%)`;
   }
-
-  url += `&order=section.asc`;
 
   const res = await fetch(url, {
     headers: {
@@ -45,15 +42,23 @@ async function performSearch() {
   });
 
   const data = await res.json();
+
   displayResults(data);
 }
 
-// 📊 DISPLAY RESULTS (CLICKABLE)
+// 📊 DISPLAY RESULTS (SORT FIXED)
 function displayResults(results) {
   const modal = document.getElementById('resultsModal');
   const modalResults = document.getElementById('modalResults');
 
   modal.style.display = 'flex';
+
+  // ✅ SORT NUMERICALLY
+  results.sort((a, b) => {
+    const aNum = parseInt(a.section) || 0;
+    const bNum = parseInt(b.section) || 0;
+    return aNum - bNum;
+  });
 
   modalResults.innerHTML = results.map((law, index) => `
     <div class="result-item" onclick="displaySingleLaw(${index})">
@@ -62,18 +67,17 @@ function displayResults(results) {
     </div>
   `).join('');
 
-  // store results temporarily
   window.currentResults = results;
 }
 
-// 📘 SINGLE LAW VIEW (FIXED + FORMATTED)
+// 📘 SINGLE LAW VIEW (BACK FIXED)
 function displaySingleLaw(index) {
   const law = window.currentResults[index];
 
   const modalResults = document.getElementById('modalResults');
 
   modalResults.innerHTML = `
-    <button onclick="performSearch()" style="margin-bottom:10px;">⬅ Back</button>
+    <button onclick="displayResults(window.currentResults)" style="margin-bottom:10px;">⬅ Back</button>
 
     <h2>${law.title}</h2>
     <p>${law.description}</p>
@@ -86,12 +90,12 @@ function displaySingleLaw(index) {
   `;
 }
 
-// 🧠 FORMAT LEGAL CONTENT
+// 🧠 FORMAT CONTENT (NO CHANGE)
 function formatContent(content) {
   if (!content) return "";
 
   return content
-    .split(/(?=\(\d+\))/) // split (1)(2)(3)
+    .split(/(?=\(\d+\))/)
     .map(point => {
       const num = point.match(/^\(\d+\)/);
       if (!num) return `<p>${point}</p>`;
@@ -105,14 +109,14 @@ function formatContent(content) {
     .join('');
 }
 
-// 🎯 CLASSIFICATION (FIXED)
+// 🎯 CLASSIFICATION CLICK (SORT FIXED)
 function initializeClassifications() {
   const cards = document.querySelectorAll('.classification-card');
 
   cards.forEach(card => {
     card.addEventListener('click', async function () {
 
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/laws?select=*&order=section.asc`, {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/laws?select=*`, {
         headers: {
           apikey: SUPABASE_KEY,
           Authorization: `Bearer ${SUPABASE_KEY}`
@@ -120,6 +124,7 @@ function initializeClassifications() {
       });
 
       const data = await res.json();
+
       displayResults(data);
     });
   });
@@ -190,7 +195,7 @@ function initializeChatbot() {
   }
 }
 
-// 🧾 DRAFT
+// 🧾 DRAFT (UNCHANGED)
 async function generateDraft() {
   const type = document.getElementById("draftType").value;
   const input = document.getElementById("draftInput").value;
@@ -211,21 +216,17 @@ async function generateDraft() {
   document.getElementById("draftResult").innerText = data.response;
 }
 
-function closeModal() {
-  document.getElementById('resultsModal').style.display = 'none';
-  document.body.style.overflow = 'auto';
-}
-
-// ✅ BACK BUTTON FIX
-document.addEventListener('click', function (e) {
-  if (e.target.id === 'backBtn') {
-    closeModal();
-  }
-});
 // 🚀 INIT
 document.addEventListener('DOMContentLoaded', function () {
   loadLaws();
   initializeClassifications();
   setupModal();
   initializeChatbot();
+
+  // ✅ SEARCH BUTTON FIX
+  document.getElementById("searchBtn").addEventListener("click", performSearch);
+
+  document.getElementById("searchInput").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") performSearch();
+  });
 });
