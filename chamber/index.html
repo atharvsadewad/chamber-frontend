@@ -72,20 +72,68 @@
     </div>
 </section>
 
-<div style="margin:40px;">
-  <h2>Generate Legal Draft</h2>
+    <div style="margin:60px auto; max-width:900px;">
+  <div style="
+    background:white;
+    border-radius:16px;
+    padding:25px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.08);
+    border-top:4px solid #c9a227;
+  ">
 
-  <select id="draftType">
-    <option value="fir">FIR</option>
-    <option value="notice">Legal Notice</option>
-  </select>
+    <h2 style="margin-bottom:20px; color:#1f3c88;">
+      Generate Legal Draft
+    </h2>
 
-  <input id="draftInput" placeholder="Enter details (e.g. theft, location, date)" style="width:60%; padding:10px;" />
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
 
-  <button onclick="generateDraft()">Generate Draft</button>
+      <select id="draftType" style="
+        padding:10px;
+        border-radius:8px;
+        border:1px solid #ccc;
+      ">
+        <option value="fir">FIR</option>
+        <option value="notice">Legal Notice</option>
+      </select>
 
-  <div id="draftResult" style="margin-top:20px;"></div>
+      <input 
+        id="draftInput" 
+        placeholder="Enter details (e.g. theft in Pune on 5th April)"
+        style="
+          flex:1;
+          padding:10px;
+          border-radius:8px;
+          border:1px solid #ccc;
+          min-width:250px;
+        "
+      />
+
+      <button onclick="generateDraft()" style="
+        background:#c9a227;
+        color:white;
+        border:none;
+        padding:10px 18px;
+        border-radius:8px;
+        cursor:pointer;
+        font-weight:600;
+      ">
+        Generate
+      </button>
+
+    </div>
+
+    <div id="draftResult" style="
+      margin-top:20px;
+      padding:15px;
+      background:#f9f9f9;
+      border-radius:10px;
+      white-space:pre-wrap;
+    "></div>
+
+  </div>
 </div>
+
+
 
     <!-- Main Content -->
     <main class="main-content">
