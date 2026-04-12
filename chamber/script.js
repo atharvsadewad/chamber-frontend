@@ -21,21 +21,19 @@ async function performSearch() {
 
   let url = `${SUPABASE_URL}/rest/v1/laws?select=*`;
 
-  // 🔥 detect "section X"
-  const sectionMatch = input.match(/section\s*(\d+)/);
+  const sectionMatch = input.match(/section\s*(\d*)/);
 
-  if (sectionMatch) {
+  if (sectionMatch && sectionMatch[1]) {
     const num = sectionMatch[1];
-
-    url += `&section=like.${num}%`;  
-    // 🔥 THIS gives:
-    // 1 → 1, 10, 11, 100 etc
-
+    url += `&section=like.${num}%`;
+  } else if (input.includes("section")) {
+    // 🔥 if only "section" typed → return all
+    url += ``;
   } else if (input) {
     url += `&or=(title.ilike.%${input}%,description.ilike.%${input}%,content.ilike.%${input}%)`;
   }
 
-  url += `&order=section.asc`;
+  url += `&order=section::int.asc`;
 
   const res = await fetch(url, {
     headers: {
@@ -43,6 +41,10 @@ async function performSearch() {
       Authorization: `Bearer ${SUPABASE_KEY}`
     }
   });
+
+  const data = await res.json();
+  displayResults(data);
+}
 
   const data = await res.json();
   displayResults(data);
@@ -222,6 +224,13 @@ document.addEventListener('click', function (e) {
     closeModal();
   }
 });
+
+document.getElementById("searchBtn").addEventListener("click", performSearch);
+
+document.getElementById("searchInput").addEventListener("keypress", function (e) {
+  if (e.key === "Enter") performSearch();
+});
+
 // 🚀 INIT
 document.addEventListener('DOMContentLoaded', function () {
   loadLaws();
