@@ -264,3 +264,20 @@ document.addEventListener('DOMContentLoaded', function () {
   setupModal();
   initializeChatbot();
 });
+
+
+function openDraft() {
+  document.getElementById("draftModal").style.display = "flex";
+}
+
+function closeDraft() {
+  document.getElementById("draftModal").style.display = "none";
+}
+
+// safer version (does NOT override other handlers)
+document.addEventListener("click", function(e) {
+  const modal = document.getElementById("draftModal");
+  if (e.target === modal) {
+    modal.style.display = "none";
+  }
+});
