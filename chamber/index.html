@@ -72,7 +72,20 @@
     </div>
 </section>
 
+<div style="margin:40px;">
+  <h2>Generate Legal Draft</h2>
 
+  <select id="draftType">
+    <option value="fir">FIR</option>
+    <option value="notice">Legal Notice</option>
+  </select>
+
+  <input id="draftInput" placeholder="Enter details (e.g. theft, location, date)" style="width:60%; padding:10px;" />
+
+  <button onclick="generateDraft()">Generate Draft</button>
+
+  <div id="draftResult" style="margin-top:20px;"></div>
+</div>
 
     <!-- Main Content -->
     <main class="main-content">
