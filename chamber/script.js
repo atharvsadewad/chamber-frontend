@@ -35,6 +35,27 @@ async function performSearch() {
       url += `&or=(title.ilike.%${query}%,description.ilike.%${query}%,content.ilike.%${query}%)`;
     }
 
+    async function generateDraft() {
+  const type = document.getElementById("draftType").value;
+  const input = document.getElementById("draftInput").value;
+
+  if (!input) return alert("Enter details");
+
+  const res = await fetch("https://chamber-backend1.vercel.app/api/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      message: `Generate a ${type} draft for: ${input}`
+    })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("draftResult").innerText = data.response;
+}
+
     // 🎯 filter condition
     if (activeFilter !== 'all') {
       url += `&subject=eq.${activeFilter}`;
