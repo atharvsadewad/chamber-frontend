@@ -15,23 +15,31 @@ async function loadLaws() {
   laws = await res.json();
 }
 
-// 🔍 UNIVERSAL SEARCH (FIXED)
+// 🔍 UNIVERSAL SEARCH (IMPROVED — relevance scoring + filter support)
 async function performSearch() {
   const input = document.getElementById('searchInput').value.trim().toLowerCase();
 
+  if (!input) {
+    alert('Please enter a search term.');
+    return;
+  }
+
+  // Build base URL
   let url = `${SUPABASE_URL}/rest/v1/laws?select=*`;
 
-  if (!input) {
-    // show all
-  } 
-  else if (!isNaN(input)) {
-    // number search (1, 10, 302)
-    url += `&section=like.${input}%`;
-  } 
-  else {
-    const encoded = encodeURIComponent(input);
+  // Apply active filter tag (category filter)
+  const activeFilter = document.querySelector('.filter-tag.active');
+  const filterValue = activeFilter ? activeFilter.dataset.filter : 'all';
+  if (filterValue && filterValue !== 'all') {
+    url += `&category=eq.${filterValue}`;
+  }
 
-    url += `&or=(title.ilike.%${encoded}%,description.ilike.%${encoded}%,content.ilike.%${encoded}%,section.ilike.%${encoded}%)`;
+  // Apply search terms
+  if (!isNaN(input)) {
+    url += `&section=ilike.*${input}*`;
+  } else {
+    const encoded = encodeURIComponent(input);
+    url += `&or=(title.ilike.*${encoded}*,description.ilike.*${encoded}*,content.ilike.*${encoded}*,section.ilike.*${encoded}*)`;
   }
 
   const res = await fetch(url, {
@@ -43,22 +51,55 @@ async function performSearch() {
 
   const data = await res.json();
 
-  displayResults(data);
+  // Client-side relevance scoring for best-match ordering
+  const scored = data.map(law => {
+    let score = 0;
+    const t = (law.title || '').toLowerCase();
+    const d = (law.description || '').toLowerCase();
+    const s = (law.section || '').toLowerCase();
+    const c = (law.content || '').toLowerCase();
+
+    if (s === input) score += 100;           // exact section match
+    else if (s.startsWith(input)) score += 80;
+    if (t === input) score += 90;            // exact title match
+    else if (t.includes(input)) score += 60;
+    if (d.includes(input)) score += 40;
+    if (c.includes(input)) score += 20;
+
+    return { ...law, _score: score };
+  });
+
+  scored.sort((a, b) => b._score - a._score);
+
+  displayResults(scored);
 }
 
-// 📊 DISPLAY RESULTS (SORT FIXED)
+// 📊 DISPLAY RESULTS (with no-results message)
 function displayResults(results) {
   const modal = document.getElementById('resultsModal');
   const modalResults = document.getElementById('modalResults');
 
   modal.style.display = 'flex';
 
-  // ✅ SORT NUMERICALLY
-  results.sort((a, b) => {
-    const aNum = parseInt(a.section) || 0;
-    const bNum = parseInt(b.section) || 0;
-    return aNum - bNum;
-  });
+  if (!results || results.length === 0) {
+    modalResults.innerHTML = `
+      <div style="text-align:center; padding:2rem; color:#718096;">
+        <i class="fas fa-search" style="font-size:2rem; margin-bottom:1rem; display:block;"></i>
+        <h3>No results found</h3>
+        <p>Try a different search term or category.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // If results already have relevance scores, keep that order; otherwise sort numerically
+  if (!results[0]._score) {
+    results.sort((a, b) => {
+      const aNum = parseInt(a.section) || 0;
+      const bNum = parseInt(b.section) || 0;
+      return aNum - bNum;
+    });
+  }
 
   modalResults.innerHTML = results.map((law, index) => `
     <div class="result-item" onclick="displaySingleLaw(${index})">
@@ -109,14 +150,20 @@ function formatContent(content) {
     .join('');
 }
 
-// 🎯 CLASSIFICATION CLICK (SORT FIXED)
+// 🎯 CLASSIFICATION CLICK (FIXED — filters by category/type)
 function initializeClassifications() {
   const cards = document.querySelectorAll('.classification-card');
 
   cards.forEach(card => {
     card.addEventListener('click', async function () {
+      const category = this.dataset.category;
+      const type = this.dataset.type;
 
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/laws?select=*`, {
+      let url = `${SUPABASE_URL}/rest/v1/laws?select=*`;
+      if (category) url += `&category=eq.${category}`;
+      else if (type) url += `&type=eq.${type}`;
+
+      const res = await fetch(url, {
         headers: {
           apikey: SUPABASE_KEY,
           Authorization: `Bearer ${SUPABASE_KEY}`
@@ -195,25 +242,41 @@ function initializeChatbot() {
   }
 }
 
-// 🧾 DRAFT (UNCHANGED)
+// 🧾 DRAFT MODAL OPEN/CLOSE
+function openDraft() {
+  document.getElementById('draftModal').style.display = 'flex';
+}
+
+function closeDraft() {
+  document.getElementById('draftModal').style.display = 'none';
+}
+
+// 🧾 DRAFT GENERATION
 async function generateDraft() {
   const type = document.getElementById("draftType").value;
   const input = document.getElementById("draftInput").value;
 
   if (!input) return alert("Enter details");
 
-  const res = await fetch("https://chamber-backend1.vercel.app/api/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      message: `Generate a ${type} draft for: ${input}`
-    })
-  });
+  const resultDiv = document.getElementById("draftResult");
+  resultDiv.innerText = "Generating draft...";
 
-  const data = await res.json();
-  document.getElementById("draftResult").innerText = data.response;
+  try {
+    const res = await fetch("https://chamber-backend1.vercel.app/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: `Generate a ${type} draft for: ${input}`
+      })
+    });
+
+    const data = await res.json();
+    resultDiv.innerText = data.response;
+  } catch (err) {
+    resultDiv.innerText = "Error generating draft. Please try again.";
+  }
 }
 
 // 🚀 INIT
@@ -223,10 +286,18 @@ document.addEventListener('DOMContentLoaded', function () {
   setupModal();
   initializeChatbot();
 
-  // ✅ SEARCH BUTTON FIX
+  // ✅ SEARCH BUTTON + ENTER KEY
   document.getElementById("searchBtn").addEventListener("click", performSearch);
 
   document.getElementById("searchInput").addEventListener("keypress", function (e) {
     if (e.key === "Enter") performSearch();
+  });
+
+  // ✅ FILTER TAG CLICK
+  document.querySelectorAll('.filter-tag').forEach(tag => {
+    tag.addEventListener('click', function () {
+      document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
   });
 });
