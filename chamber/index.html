@@ -72,26 +72,13 @@
     </div>
 </section>
 
-    <div style="text-align:center; margin:60px 0;">
-  <button onclick="openDraft()" style="
-    background:#c9a227;
-    color:white;
-    border:none;
-    padding:14px 28px;
-    font-size:16px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:600;
-    transition:0.3s;
-  "
-  onmouseover="this.style.transform='scale(1.05)'"
-  onmouseout="this.style.transform='scale(1)'"
-  >
+<div style="text-align:center; margin:60px 0;">
+  <button onclick="openDraft()" class="draft-btn">
     Generate Legal Draft
   </button>
 </div>
 
-    <div id="draftModal" style="
+<div id="draftModal" style="
   display:none;
   position:fixed;
   top:0;
@@ -112,7 +99,6 @@
     overflow:hidden;
   ">
 
-    <!-- 🔥 Yellow Top Bar -->
     <div style="height:5px; background:#c9a227;"></div>
 
     <div style="padding:25px;">
@@ -126,7 +112,8 @@
           <option value="notice">Legal Notice</option>
         </select>
 
-        <input id="draftInput" placeholder="Enter details..."
+        <input id="draftInput"
+          placeholder="Enter details..."
           style="flex:1; padding:10px; border-radius:8px; min-width:200px;" />
 
         <button onclick="generateDraft()" style="
@@ -162,10 +149,6 @@
     </div>
   </div>
 </div>
-
-
-
-
 
     <!-- Main Content -->
     <main class="main-content">
@@ -367,68 +350,7 @@
         </div>
     </div>
     <script src="script.js"></script>
- 
-
-<!-- Results Modal -->
-<div id="resultsModal" class="modal">
-  <div class="modal-content">
-    <span id="modalClose" class="close">&times;</span>
-    <div id="modalResults"></div>
-  </div>
-</div>
-
-<style>
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.5);
-    justify-content: center;
-    align-items: center;
-  }
-  .modal-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    max-width: 800px;
-    width: 90%;
-    max-height: 80%;
-    overflow-y: auto;
-  }
-  .close {
-    float: right;
-    font-size: 24px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  .result-item {
-    border-bottom: 1px solid #ddd;
-    padding: 10px 0;
-  }
-  .result-title {
-    font-weight: bold;
-    font-size: 18px;
-  }
-  .result-description {
-    color: #666;
-  }
-  .result-tags {
-    margin-top: 5px;
-  }
-  .result-tag {
-    display: inline-block;
-    background: #eef;
-    padding: 3px 8px;
-    border-radius: 5px;
-    font-size: 12px;
-    margin-right: 5px;
-  }
-</style>
 
 </body>
 </html>
+ 
