@@ -211,6 +211,17 @@ async function generateDraft() {
   document.getElementById("draftResult").innerText = data.response;
 }
 
+function closeModal() {
+  document.getElementById('resultsModal').style.display = 'none';
+  document.body.style.overflow = 'auto';
+}
+
+// ✅ BACK BUTTON FIX
+document.addEventListener('click', function (e) {
+  if (e.target.id === 'backBtn') {
+    closeModal();
+  }
+});
 // 🚀 INIT
 document.addEventListener('DOMContentLoaded', function () {
   loadLaws();
