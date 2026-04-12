@@ -23,28 +23,39 @@ async function loadLaws() {
 }
 
 // 🔍 SEARCH FUNCTION
-function performSearch() {
+async function performSearch() {
   const query = document.getElementById('searchInput').value.toLowerCase();
   const activeFilter = document.querySelector('.filter-tag.active').dataset.filter;
 
-  let filteredResults = laws;
+  try {
+    let url = `${SUPABASE_URL}/rest/v1/laws?select=*`;
 
-  if (activeFilter !== 'all') {
-    filteredResults = filteredResults.filter(law =>
-      law.subject === activeFilter || law.instrument_type === activeFilter
-    );
+    // 🔍 search condition
+    if (query) {
+      url += `&or=(title.ilike.%${query}%,description.ilike.%${query}%,content.ilike.%${query}%)`;
+    }
+
+    // 🎯 filter condition
+    if (activeFilter !== 'all') {
+      url += `&subject=eq.${activeFilter}`;
+    }
+
+    const res = await fetch(url, {
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`
+      }
+    });
+
+    const data = await res.json();
+
+    console.log("🔍 Search Results:", data);
+
+    displayResults(data);
+
+  } catch (err) {
+    console.error("❌ Search error:", err);
   }
-
-  if (query) {
-    filteredResults = filteredResults.filter(law =>
-      law.title.toLowerCase().includes(query) ||
-      law.description.toLowerCase().includes(query) ||
-      (law.content && law.content.toLowerCase().includes(query)) ||
-      (law.keywords && law.keywords.some(k => k.toLowerCase().includes(query)))
-    );
-  }
-
-  displayResults(filteredResults);
 }
 
 // 🎯 CLASSIFICATION CLICK
