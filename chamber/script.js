@@ -151,46 +151,36 @@ function formatContent(content) {
 }
 
 // 🎯 CLASSIFICATION CLICK (FIXED — filters by category/type)
- function initializeClassifications() {
+function initializeClassifications() {
   const cards = document.querySelectorAll('.classification-card');
 
   cards.forEach(card => {
     card.addEventListener('click', async function () {
 
-      // ✅ RESET OLD RESULTS
       window.currentResults = [];
 
-      // ✅ GET SUBJECT (IMPORTANT — NOT category confusion)
-      const subject = this.dataset.subject;
+      // ✅ FIXED HERE
+      const subject = this.dataset.category;
 
       let url = `${SUPABASE_URL}/rest/v1/laws?select=*`;
 
-      // ✅ FILTER USING SUBJECT
       if (subject && subject !== "all") {
         url += `&subject=eq.${subject.toLowerCase()}`;
       }
 
-      try {
-        const res = await fetch(url, {
-          headers: {
-            apikey: SUPABASE_KEY,
-            Authorization: `Bearer ${SUPABASE_KEY}`
-          }
-        });
+      const res = await fetch(url, {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`
+        }
+      });
 
-        const data = await res.json();
+      const data = await res.json();
 
-        // ✅ SHOW RESULTS
-        displayResults(data);
-
-      } catch (err) {
-        console.error("Error fetching classification:", err);
-      }
-
+      displayResults(data);
     });
   });
 }
-
 // ❌ MODAL CLOSE
 function setupModal() {
   const modal = document.getElementById('resultsModal');
