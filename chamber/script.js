@@ -255,7 +255,30 @@ function openDraft() {
 function closeDraft() {
   document.getElementById('draftModal').style.display = 'none';
 }
+let currentLang = "en";
 
+function toggleLangMenu() {
+  const menu = document.getElementById("langMenu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+document.querySelector(".lang-btn").addEventListener("click", toggleLangMenu);
+
+function setLanguage(lang) {
+  currentLang = lang;
+
+  const labels = {
+    en: "English",
+    hi: "हिंदी",
+    mr: "मराठी"
+  };
+
+  document.getElementById("currentLangLabel").innerText = labels[lang];
+
+  document.getElementById("langMenu").style.display = "none";
+
+  alert("⚠️ Demo Translation Enabled (May not be legally accurate)");
+}
 // 🚀 INIT
 document.addEventListener('DOMContentLoaded', function () {
   loadLaws();
