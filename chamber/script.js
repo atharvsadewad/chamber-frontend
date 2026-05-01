@@ -303,9 +303,16 @@ function initializeChatbot() {
 
 function goBackToResults() {
   displayResults(window.currentResults).then(() => {
-    setTimeout(() => {
-      document.getElementById("modalResults").scrollTop = savedScrollPosition;
-    }, 50);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const container = document.getElementById("modalResults");
+        if (container) {
+          container.scrollTop = savedScrollPosition;
+        }
+      });
+    });
+
   });
 }
 
