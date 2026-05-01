@@ -3,6 +3,7 @@ const SUPABASE_KEY = "sb_publishable_BpzTnxe-unBnSsdfdKUZ0Q__9L1ZZaJ";
 
 let laws = [];
 let currentLang = "en";
+let savedScrollPosition = 0;
 
 // 🔥 LOAD LAWS
 async function loadLaws() {
@@ -139,6 +140,7 @@ async function displayResults(results, title = "Results") {
 
 // 📘 SINGLE LAW VIEW
 async function displaySingleLaw(index) {
+  savedScrollPosition = document.getElementById("modalResults").scrollTop;
   const law = window.currentResults[index];
   const modalResults = document.getElementById("modalResults");
 
@@ -146,7 +148,7 @@ async function displaySingleLaw(index) {
   const descText = await translateText(law.description);
 
   modalResults.innerHTML = `
-    <button onclick="displayResults(window.currentResults)" style="margin-bottom:10px;">⬅ Back</button>
+    <button onclick="goBackToResults()" style="margin-bottom:10px;">⬅ Back</button>
 
     <h2>${titleText}</h2>
     <p>${descText}</p>
@@ -297,6 +299,14 @@ function initializeChatbot() {
     messages.appendChild(div);
     return div;
   }
+}
+
+function goBackToResults() {
+  displayResults(window.currentResults).then(() => {
+    setTimeout(() => {
+      document.getElementById("modalResults").scrollTop = savedScrollPosition;
+    }, 50);
+  });
 }
 
 // 🚀 INIT
