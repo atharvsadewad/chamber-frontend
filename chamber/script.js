@@ -301,19 +301,18 @@ function initializeChatbot() {
   }
 }
 
-function goBackToResults() {
-  displayResults(window.currentResults).then(() => {
+async function goBackToResults() {
+  await displayResults(window.currentResults);
 
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const container = document.getElementById("modalResults");
-        if (container) {
-          container.scrollTop = savedScrollPosition;
-        }
-      });
+  const container = document.getElementById("modalResults");
+
+  // 🔥 force restore AFTER render
+  setTimeout(() => {
+    container.scrollTo({
+      top: savedScrollPosition,
+      behavior: "auto"
     });
-
-  });
+  }, 0);
 }
 
 // 🚀 INIT
