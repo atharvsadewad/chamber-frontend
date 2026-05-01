@@ -2,6 +2,7 @@ const SUPABASE_URL = "https://vabqwsoaqpapxsmemaxw.supabase.co";
 const SUPABASE_KEY = "sb_publishable_BpzTnxe-unBnSsdfdKUZ0Q__9L1ZZaJ";
 
 let laws = [];
+let currentLang = "en";
 
 // 🔥 LOAD LAWS
 async function loadLaws() {
@@ -14,32 +15,40 @@ async function loadLaws() {
 
   laws = await res.json();
 }
-// TRANSLATION FN 
+
+// 🌐 TRANSLATION
 async function translateText(text) {
   if (currentLang === "en") return text;
 
   try {
-    const res = await fetch("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(text) + "&langpair=en|" + currentLang);
+    const res = await fetch(
+      "https://api.mymemory.translated.net/get?q=" +
+        encodeURIComponent(text) +
+        "&langpair=en|" +
+        currentLang
+    );
     const data = await res.json();
     return data.responseData.translatedText;
   } catch {
     return text;
   }
 }
+
 // 🔍 UNIVERSAL SEARCH
 async function performSearch() {
-  const input = document.getElementById('searchInput').value.trim().toLowerCase();
+  const input = document.getElementById("searchInput").value.trim().toLowerCase();
 
   if (!input) {
-    alert('Please enter a search term.');
+    alert("Please enter a search term.");
     return;
   }
 
   let url = `${SUPABASE_URL}/rest/v1/laws?select=*`;
 
-  const activeFilter = document.querySelector('.filter-tag.active');
-  const filterValue = activeFilter ? activeFilter.dataset.filter : 'all';
-  if (filterValue && filterValue !== 'all') {
+  const activeFilter = document.querySelector(".filter-tag.active");
+  const filterValue = activeFilter ? activeFilter.dataset.filter : "all";
+
+  if (filterValue && filterValue !== "all") {
     url += `&subject=eq.${filterValue}`;
   }
 
@@ -61,10 +70,10 @@ async function performSearch() {
 
   const scored = data.map(law => {
     let score = 0;
-    const t = (law.title || '').toLowerCase();
-    const d = (law.description || '').toLowerCase();
-    const s = (law.section || '').toLowerCase();
-    const c = (law.content || '').toLowerCase();
+    const t = (law.title || "").toLowerCase();
+    const d = (law.description || "").toLowerCase();
+    const s = (law.section || "").toLowerCase();
+    const c = (law.content || "").toLowerCase();
 
     if (s === input) score += 100;
     else if (s.startsWith(input)) score += 80;
@@ -82,11 +91,11 @@ async function performSearch() {
 }
 
 // 📊 DISPLAY RESULTS
-function displayResults(results, title = "Results") {
-  const modal = document.getElementById('resultsModal');
-  const modalResults = document.getElementById('modalResults');
+async function displayResults(results, title = "Results") {
+  const modal = document.getElementById("resultsModal");
+  const modalResults = document.getElementById("modalResults");
 
-  modal.style.display = 'flex';
+  modal.style.display = "flex";
 
   if (!results || results.length === 0) {
     modalResults.innerHTML = `
@@ -106,31 +115,41 @@ function displayResults(results, title = "Results") {
     });
   }
 
-  modalResults.innerHTML = `
-    <h2 style="margin-bottom:15px;">${title}</h2>
-    ${results.map((law, index) => `
-      <div class="result-item" onclick="displaySingleLaw(${index})">
-        <h3>${await translateText(law.title)}</h3>
-        <p>${await translateText(law.description)}</p>
+  let html = `<h2 style="margin-bottom:15px;">${title}</h2>`;
+
+  for (let i = 0; i < results.length; i++) {
+    const law = results[i];
+
+    const titleText = await translateText(law.title);
+    const descText = await translateText(law.description);
+
+    html += `
+      <div class="result-item" onclick="displaySingleLaw(${i})">
+        <h3>${titleText}</h3>
+        <p>${descText}</p>
         <small style="color:#888;">${law.name || ""}</small>
       </div>
-    `).join('')}
-  `;
+    `;
+  }
+
+  modalResults.innerHTML = html;
 
   window.currentResults = results;
 }
 
 // 📘 SINGLE LAW VIEW
-function displaySingleLaw(index) {
+async function displaySingleLaw(index) {
   const law = window.currentResults[index];
+  const modalResults = document.getElementById("modalResults");
 
-  const modalResults = document.getElementById('modalResults');
+  const titleText = await translateText(law.title);
+  const descText = await translateText(law.description);
 
   modalResults.innerHTML = `
     <button onclick="displayResults(window.currentResults)" style="margin-bottom:10px;">⬅ Back</button>
 
-    <h2>${await translateText(law.title)}</h2>
-    <p>${await translateText(law.description)}</p>
+    <h2>${titleText}</h2>
+    <p>${descText}</p>
     <small style="color:#888;">${law.name || ""}</small>
 
     <div style="margin-top:15px;">
@@ -157,19 +176,18 @@ function formatContent(content) {
         </div>
       `;
     })
-    .join('');
+    .join("");
 }
 
-// 🎯 CLASSIFICATION CLICK (FIXED)
+// 🎯 CLASSIFICATION CLICK
 function initializeClassifications() {
-  const cards = document.querySelectorAll('.classification-card');
+  const cards = document.querySelectorAll(".classification-card");
 
   cards.forEach(card => {
-    card.addEventListener('click', async function () {
-
+    card.addEventListener("click", async function () {
       window.currentResults = [];
 
-      const subject = this.dataset.subject; // ✅ FIXED
+      const subject = this.dataset.subject;
 
       let url = `${SUPABASE_URL}/rest/v1/laws?select=*`;
 
@@ -193,87 +211,26 @@ function initializeClassifications() {
 
 // ❌ MODAL CLOSE
 function setupModal() {
-  const modal = document.getElementById('resultsModal');
+  const modal = document.getElementById("resultsModal");
 
-  document.getElementById('modalClose').onclick = () => {
-    modal.style.display = 'none';
-    window.currentResults = []; // ✅ reset
+  document.getElementById("modalClose").onclick = () => {
+    modal.style.display = "none";
+    window.currentResults = [];
   };
 
   window.onclick = function (e) {
     if (e.target === modal) {
-      modal.style.display = 'none';
-      window.currentResults = []; // ✅ reset
+      modal.style.display = "none";
+      window.currentResults = [];
     }
   };
 }
 
-// 🤖 CHATBOT (UNCHANGED)
-function initializeChatbot() {
-  const toggle = document.getElementById('chatbotToggle');
-  const windowBox = document.getElementById('chatbotWindow');
-  const input = document.getElementById('chatbotInput');
-  const send = document.getElementById('chatbotSend');
-  const messages = document.getElementById('chatbotMessages');
-
-  toggle.addEventListener('click', () => {
-    windowBox.style.display =
-      windowBox.style.display === 'flex' ? 'none' : 'flex';
-  });
-
-  send.addEventListener('click', sendMessage);
-
-  async function sendMessage() {
-    const message = input.value.trim();
-    if (!message) return;
-
-    addMessage(message, 'user');
-    input.value = '';
-
-    const typing = addMessage('Thinking...', 'bot');
-
-    try {
-      const res = await fetch("https://chamber-backend1.vercel.app/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message })
-      });
-
-      const data = await res.json();
-      typing.remove();
-      addMessage(data.response, 'bot');
-
-    } catch {
-      typing.remove();
-      addMessage("Error connecting AI", 'bot');
-    }
-  }
-
-  function addMessage(content, sender) {
-    const div = document.createElement('div');
-    div.className = `message ${sender}`;
-    div.innerHTML = `<div>${content}</div>`;
-    messages.appendChild(div);
-    return div;
-  }
-}
-
-// 🧾 DRAFT MODAL
-function openDraft() {
-  document.getElementById('draftModal').style.display = 'flex';
-}
-
-function closeDraft() {
-  document.getElementById('draftModal').style.display = 'none';
-}
-let currentLang = "en";
-
+// 🌐 LANGUAGE UI
 function toggleLangMenu() {
   const menu = document.getElementById("langMenu");
   menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
-
-document.querySelector(".lang-btn").addEventListener("click", toggleLangMenu);
 
 function setLanguage(lang) {
   currentLang = lang;
@@ -285,28 +242,88 @@ function setLanguage(lang) {
   };
 
   document.getElementById("currentLangLabel").innerText = labels[lang];
-
   document.getElementById("langMenu").style.display = "none";
 
   alert("⚠️ Demo Translation Enabled (May not be legally accurate)");
 }
+
+// 🤖 CHATBOT (UNCHANGED)
+function initializeChatbot() {
+  const toggle = document.getElementById("chatbotToggle");
+  const windowBox = document.getElementById("chatbotWindow");
+  const input = document.getElementById("chatbotInput");
+  const send = document.getElementById("chatbotSend");
+  const messages = document.getElementById("chatbotMessages");
+
+  toggle.addEventListener("click", () => {
+    windowBox.style.display =
+      windowBox.style.display === "flex" ? "none" : "flex";
+  });
+
+  send.addEventListener("click", sendMessage);
+
+  async function sendMessage() {
+    const message = input.value.trim();
+    if (!message) return;
+
+    addMessage(message, "user");
+    input.value = "";
+
+    const typing = addMessage("Thinking...", "bot");
+
+    try {
+      const res = await fetch(
+        "https://chamber-backend1.vercel.app/api/chat",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message })
+        }
+      );
+
+      const data = await res.json();
+      typing.remove();
+      addMessage(data.response, "bot");
+    } catch {
+      typing.remove();
+      addMessage("Error connecting AI", "bot");
+    }
+  }
+
+  function addMessage(content, sender) {
+    const div = document.createElement("div");
+    div.className = `message ${sender}`;
+    div.innerHTML = `<div>${content}</div>`;
+    messages.appendChild(div);
+    return div;
+  }
+}
+
 // 🚀 INIT
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener("DOMContentLoaded", function () {
   loadLaws();
   initializeClassifications();
   setupModal();
   initializeChatbot();
 
+  // 🔥 FIXED DROPDOWN EVENT
+  const langBtn = document.querySelector(".lang-btn");
+  if (langBtn) langBtn.addEventListener("click", toggleLangMenu);
+
   document.getElementById("searchBtn").addEventListener("click", performSearch);
 
-  document.getElementById("searchInput").addEventListener("keypress", function (e) {
-    if (e.key === "Enter") performSearch();
-  });
+  document
+    .getElementById("searchInput")
+    .addEventListener("keypress", function (e) {
+      if (e.key === "Enter") performSearch();
+    });
 
-  document.querySelectorAll('.filter-tag').forEach(tag => {
-    tag.addEventListener('click', function () {
-      document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
-      this.classList.add('active');
+  document.querySelectorAll(".filter-tag").forEach(tag => {
+    tag.addEventListener("click", function () {
+      document
+        .querySelectorAll(".filter-tag")
+        .forEach(t => t.classList.remove("active"));
+      this.classList.add("active");
     });
   });
 });
