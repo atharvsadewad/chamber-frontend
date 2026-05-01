@@ -14,7 +14,18 @@ async function loadLaws() {
 
   laws = await res.json();
 }
+// TRANSLATION FN 
+async function translateText(text) {
+  if (currentLang === "en") return text;
 
+  try {
+    const res = await fetch("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(text) + "&langpair=en|" + currentLang);
+    const data = await res.json();
+    return data.responseData.translatedText;
+  } catch {
+    return text;
+  }
+}
 // 🔍 UNIVERSAL SEARCH
 async function performSearch() {
   const input = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -99,8 +110,8 @@ function displayResults(results, title = "Results") {
     <h2 style="margin-bottom:15px;">${title}</h2>
     ${results.map((law, index) => `
       <div class="result-item" onclick="displaySingleLaw(${index})">
-        <h3>${law.title}</h3>
-        <p>${law.description}</p>
+        <h3>${await translateText(law.title)}</h3>
+        <p>${await translateText(law.description)}</p>
         <small style="color:#888;">${law.name || ""}</small>
       </div>
     `).join('')}
@@ -118,8 +129,8 @@ function displaySingleLaw(index) {
   modalResults.innerHTML = `
     <button onclick="displayResults(window.currentResults)" style="margin-bottom:10px;">⬅ Back</button>
 
-    <h2>${law.title}</h2>
-    <p>${law.description}</p>
+    <h2>${await translateText(law.title)}</h2>
+    <p>${await translateText(law.description)}</p>
     <small style="color:#888;">${law.name || ""}</small>
 
     <div style="margin-top:15px;">
