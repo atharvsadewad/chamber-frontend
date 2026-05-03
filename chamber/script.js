@@ -329,6 +329,16 @@ async function generateDraft() {
   }
 }
 
+// 🧾 OPEN MODAL
+function openDraft() {
+  document.getElementById("draftModal").style.display = "flex";
+}
+
+// ❌ CLOSE MODAL
+function closeDraft() {
+  document.getElementById("draftModal").style.display = "none";
+}
+
 async function goBackToResults() {
   await displayResults(window.currentResults);
 
