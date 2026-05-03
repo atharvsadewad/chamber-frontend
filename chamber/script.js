@@ -1,20 +1,20 @@
 const SUPABASE_URL = "https://vabqwsoaqpapxsmemaxw.supabase.co";
 const SUPABASE_KEY = "sb_publishable_BpzTnxe-unBnSsdfdKUZ0Q__9L1ZZaJ";
 
-let laws = [];
+let laws_new = [];
 let currentLang = "en";
 let savedScrollPosition = 0;
 
 // 🔥 LOAD LAWS
 async function loadLaws() {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/laws?select=*`, {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/laws_new?select=*`, {
     headers: {
       apikey: SUPABASE_KEY,
       Authorization: `Bearer ${SUPABASE_KEY}`
     }
   });
 
-  laws = await res.json();
+  laws_new = await res.json();
 }
 
 // 🌐 TRANSLATION
@@ -44,7 +44,7 @@ async function performSearch() {
     return;
   }
 
-  let url = `${SUPABASE_URL}/rest/v1/laws?select=*`;
+  let url = `${SUPABASE_URL}/rest/v1/laws_new?select=*`;
 
   const activeFilter = document.querySelector(".filter-tag.active");
   const filterValue = activeFilter ? activeFilter.dataset.filter : "all";
@@ -191,7 +191,7 @@ function initializeClassifications() {
 
       const subject = this.dataset.subject;
 
-      let url = `${SUPABASE_URL}/rest/v1/laws?select=*`;
+      let url = `${SUPABASE_URL}/rest/v1/laws_new?select=*`;
 
       if (subject && subject !== "all") {
         url += `&subject=eq.${subject.toLowerCase()}`;
