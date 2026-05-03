@@ -301,6 +301,34 @@ function initializeChatbot() {
   }
 }
 
+// 🧾 DRAFT GENERATION
+async function generateDraft() {
+  const type = document.getElementById("draftType").value;
+  const input = document.getElementById("draftInput").value;
+
+  if (!input) return alert("Enter details");
+
+  const resultDiv = document.getElementById("draftResult");
+  resultDiv.innerText = "Generating draft...";
+
+  try {
+    const res = await fetch("https://chamber-backend1.vercel.app/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: `Generate a ${type} draft for: ${input}`
+      })
+    });
+
+    const data = await res.json();
+    resultDiv.innerText = data.response;
+  } catch (err) {
+    resultDiv.innerText = "Error generating draft. Please try again.";
+  }
+}
+
 async function goBackToResults() {
   await displayResults(window.currentResults);
 
