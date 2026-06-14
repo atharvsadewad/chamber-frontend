@@ -1,5 +1,10 @@
 const SUPABASE_URL = "https://vabqwsoaqpapxsmemaxw.supabase.co";
 const SUPABASE_KEY = "sb_publishable_BpzTnxe-unBnSsdfdKUZ0Q__9L1ZZaJ";
+const SUPABASE_URL = "https://vabqwsoaqpapxsmemaxw.supabase.co";
+const SUPABASE_KEY = "sb_publishable_BpzTnxe-unBnSsdfdKUZ0Q__9L1ZZaJ";
+const BACKEND_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://localhost:3001/api/chat"
+  : "https://chamber-backend1.vercel.app/api/chat";
 
 let laws_new = [];
 let currentLang = "en";
@@ -275,7 +280,7 @@ function initializeChatbot() {
 
     try {
       const res = await fetch(
-        "https://chamber-backend1.vercel.app/api/chat",
+        BACKEND_URL,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -312,7 +317,7 @@ async function generateDraft() {
   resultDiv.innerText = "Generating draft...";
 
   try {
-    const res = await fetch("https://chamber-backend1.vercel.app/api/chat", {
+    const res = await fetch(BACKEND_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -353,8 +358,39 @@ async function goBackToResults() {
   }, 0);
 }
 
+// 🌗 THEME SWITCHER
+function initializeTheme() {
+  const themeToggle = document.getElementById("themeToggle");
+  if (!themeToggle) return;
+
+  const icon = themeToggle.querySelector("i");
+
+  // Check saved theme
+  const savedTheme = localStorage.getItem("theme") || "dark";
+  if (savedTheme === "light") {
+    document.body.classList.add("light-theme");
+    if (icon) {
+      icon.className = "fas fa-sun";
+    }
+  } else {
+    document.body.classList.remove("light-theme");
+    if (icon) {
+      icon.className = "fas fa-moon";
+    }
+  }
+
+  themeToggle.addEventListener("click", () => {
+    const isLight = document.body.classList.toggle("light-theme");
+    localStorage.setItem("theme", isLight ? "light" : "dark");
+    if (icon) {
+      icon.className = isLight ? "fas fa-sun" : "fas fa-moon";
+    }
+  });
+}
+
 // 🚀 INIT
 document.addEventListener("DOMContentLoaded", function () {
+  initializeTheme();
   loadLaws();
   initializeClassifications();
   setupModal();
@@ -381,3 +417,202 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+// 🌌 INTERACTIVE PARTICLES SIMULATION (UNIFORM SMALL PARTICLES & SPARKLE TRAIL)
+function initParticles() {
+  const canvas = document.getElementById("particleCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+
+  let particles = [];
+  let sparkles = [];
+  
+  // Google Colors with RGB equivalents for alpha control
+  const colors = [
+    { hex: "#4285F4", rgb: "66, 133, 244" }, // Google Blue
+    { hex: "#EA4335", rgb: "234, 67, 53" }, // Google Red
+    { hex: "#FBBC05", rgb: "251, 188, 5" },  // Google Yellow
+    { hex: "#34A853", rgb: "52, 168, 83" }   // Google Green
+  ];
+
+  const mouse = {
+    x: null,
+    y: null,
+    radius: 160 // Mouse interaction distance
+  };
+
+  // 🎇 Sparkle Trail Class
+  class Sparkle {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+      this.size = Math.random() * 2 + 1; // sparkle size
+      this.color = colors[Math.floor(Math.random() * colors.length)].hex;
+      this.vx = (Math.random() - 0.5) * 1.5; // horizontal spread
+      this.vy = (Math.random() - 0.5) * 1.5 - 0.2; // vertical slow rise/fall
+      this.alpha = 1;
+      this.decay = Math.random() * 0.04 + 0.03; // fading speed
+    }
+
+    draw() {
+      ctx.save();
+      ctx.globalAlpha = this.alpha;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = this.color;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.alpha -= this.decay;
+    }
+  }
+
+  window.addEventListener("mousemove", (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    
+    // Add sparkles on mouse movement!
+    for (let i = 0; i < 3; i++) {
+      sparkles.push(new Sparkle(e.clientX, e.clientY));
+    }
+  });
+
+  window.addEventListener("mouseout", () => {
+    mouse.x = null;
+    mouse.y = null;
+  });
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    createParticles();
+  }
+
+  window.addEventListener("resize", resizeCanvas);
+
+  class Particle {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+      this.radius = 1.2; // Equal, small size for all background particles
+      this.colorObj = colors[Math.floor(Math.random() * colors.length)];
+      this.vx = (Math.random() - 0.5) * 0.4; // slow drift
+      this.vy = (Math.random() - 0.5) * 0.4;
+    }
+
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.colorObj.hex;
+      ctx.fill();
+    }
+
+    update() {
+      // Bounce boundaries
+      if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
+      if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy;
+
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // Mouse attraction
+      if (mouse.x !== null && mouse.y !== null) {
+        const dx = this.x - mouse.x;
+        const dy = this.y - mouse.y;
+        const distance = Math.hypot(dx, dy);
+
+        if (distance < mouse.radius) {
+          const force = (mouse.radius - distance) / mouse.radius;
+          const angle = Math.atan2(dy, dx);
+          
+          // Gentle drag towards mouse
+          this.x -= Math.cos(angle) * force * 0.4;
+          this.y -= Math.sin(angle) * force * 0.4;
+        }
+      }
+    }
+  }
+
+  function createParticles() {
+    particles = [];
+    const particleCount = Math.floor((canvas.width * canvas.height) / 14000);
+    for (let i = 0; i < Math.min(particleCount, 130); i++) {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      particles.push(new Particle(x, y));
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const isLight = document.body.classList.contains("light-theme");
+    const linkColor = isLight ? "0, 0, 0" : "255, 255, 255";
+
+    // 1. Draw connection line from mouse pointer to nearby background particles
+    if (mouse.x !== null && mouse.y !== null) {
+      for (let i = 0; i < particles.length; i++) {
+        const dxMouse = particles[i].x - mouse.x;
+        const dyMouse = particles[i].y - mouse.y;
+        const distMouse = Math.hypot(dxMouse, dyMouse);
+
+        if (distMouse < mouse.radius) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.strokeStyle = `rgba(${particles[i].colorObj.rgb}, ${0.12 * (1 - distMouse / mouse.radius)})`;
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // 2. Draw background particles & constellation connections
+    for (let i = 0; i < particles.length; i++) {
+      particles[i].update();
+      particles[i].draw();
+
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist < 110) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(${linkColor}, ${0.035 * (1 - dist / 110)})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // 3. Update and draw mouse sparkles trail
+    for (let i = sparkles.length - 1; i >= 0; i--) {
+      sparkles[i].update();
+      if (sparkles[i].alpha <= 0) {
+        sparkles.splice(i, 1);
+      } else {
+        sparkles[i].draw();
+      }
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  resizeCanvas();
+  animate();
+}
+
+// Initialize particles on window load
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initParticles);
+} else {
+  initParticles();
+}
