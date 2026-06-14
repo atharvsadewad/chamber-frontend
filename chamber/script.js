@@ -1,7 +1,5 @@
 const SUPABASE_URL = "https://vabqwsoaqpapxsmemaxw.supabase.co";
 const SUPABASE_KEY = "sb_publishable_BpzTnxe-unBnSsdfdKUZ0Q__9L1ZZaJ";
-const SUPABASE_URL = "https://vabqwsoaqpapxsmemaxw.supabase.co";
-const SUPABASE_KEY = "sb_publishable_BpzTnxe-unBnSsdfdKUZ0Q__9L1ZZaJ";
 const BACKEND_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
   ? "http://localhost:3001/api/chat"
   : "https://chamber-backend1.vercel.app/api/chat";
